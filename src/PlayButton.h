@@ -1,6 +1,7 @@
 #ifndef PLAYBUTTON_H
 #define PLAYBUTTON_H
 
+#include "AudioClip.h"
 #include "Button.h"
 
 class PlayButton : public Button
@@ -14,6 +15,7 @@ public:
 
 private:
     SDL_Surface *normal, *hover;
+    AudioClip *clip;
 };
 
 #endif
