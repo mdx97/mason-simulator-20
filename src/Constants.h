@@ -8,6 +8,8 @@ namespace Constants {
     const int SCREEN_WIDTH = 640;
     const int SCREEN_HEIGHT = 480;
     const std::string THEME_SONG_PATH = "resources/theme.wav";
+    const std::string PLAY_BUTTON_PATH = "resources/PlayButton.bmp";
+    const std::string PLAY_BUTTON_HOVER_PATH = "resources/PlayButtonHover.bmp";
 };
 
 #endif

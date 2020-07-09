@@ -3,6 +3,9 @@
 
 #include "SDL.h"
 
-SDL_Point mouse;
+namespace Mouse {
+    extern SDL_Point position;
+    extern bool left_click;
+};
 
 #endif
