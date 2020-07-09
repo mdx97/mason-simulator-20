@@ -3,6 +3,7 @@
 
 bool EventSystem::exit = false;
 
+// Checks for new I/O events and updates the Event System's internal representation of the state of these various I/O devices.
 void EventSystem::Process()
 {
     SDL_Event e;

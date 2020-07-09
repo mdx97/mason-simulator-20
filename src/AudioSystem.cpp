@@ -4,9 +4,11 @@ AudioClip *playing;
 
 void AudioCallback(void *userdata, Uint8 *stream, int len)
 {
+    // todo: support concurrent tracks.
     playing->Callback(userdata, stream, len);
 }
 
+// Begins playing the given audio clip.
 void AudioSystem::PlayClip(AudioClip *clip)
 {
     // todo: handle errors.

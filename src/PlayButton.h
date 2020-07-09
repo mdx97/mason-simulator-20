@@ -7,6 +7,7 @@ class PlayButton : public Button
 {
 public:
     PlayButton();
+    ~PlayButton();
     void Hover();
     void Unhover();
     void Click();

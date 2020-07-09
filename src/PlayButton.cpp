@@ -10,6 +10,12 @@ PlayButton::PlayButton()
     surface = normal;
 }
 
+PlayButton::~PlayButton()
+{
+    SDL_FreeSurface(normal);
+    SDL_FreeSurface(hover);
+}
+
 void PlayButton::Hover() 
 {
     surface = hover;

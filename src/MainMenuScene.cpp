@@ -21,5 +21,6 @@ void MainMenuScene::OnLoad()
 
 void MainMenuScene::OnUnload()
 {
-    // todo: clean up after myself.
+    for (auto object : objects)
+        delete object;
 }

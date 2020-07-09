@@ -14,6 +14,7 @@ class LoopedAudioClip : public AudioClip
 {
 public:
     LoopedAudioClip(const std::string &filepath);
+    ~LoopedAudioClip();
     void Callback(void *userdata, Uint8 *stream, int len) override;
 
 private:
