@@ -8,6 +8,13 @@
 class Object
 {
 public:
+    Object() {}
+    ~Object()
+    {
+        for (auto component : components)
+            delete component;
+    }
+
     std::vector<Component *> components;
 
     // todo: create source file? may not be worth if this is our only function.

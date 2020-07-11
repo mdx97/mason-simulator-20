@@ -14,6 +14,8 @@ namespace Constants {
 
     const std::string THEME_SONG_PATH = "resources/theme.wav";
 
+    const std::string MENU_BUTTON_PATH = "resources/Menu.bmp";
+    const std::string MENU_BUTTON_HOVER_PATH = "resources/MenuHover.bmp";
     const std::string PLAY_BUTTON_PATH = "resources/PlayButton.bmp";
     const std::string PLAY_BUTTON_HOVER_PATH = "resources/PlayButtonHover.bmp";
     const std::string PLAYING_AREA_PATH = "resources/PlayingArea.bmp";

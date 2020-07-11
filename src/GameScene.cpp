@@ -1,8 +1,17 @@
 #include "engine/Object.h"
+#include "engine/SceneSystem.h"
 #include "engine/SpriteComponent.h"
+#include "engine/UIComponent.h"
 #include "engine/Utility.h"
 #include "Constants.h"
 #include "GameScene.h"
+#include "MainMenuScene.h"
+
+void MenuButtonClick(Object *object)
+{
+    auto *scene = new MainMenuScene;
+    SceneSystem::Load(scene);
+}
 
 void GameScene::OnLoad()
 {
@@ -11,6 +20,16 @@ void GameScene::OnLoad()
     area_sprite->rect = Utility::CreateCenterRect(area_sprite->surface->w, area_sprite->surface->h, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT);
     area->AddComponent(area_sprite);
     AddObject(area);
+
+    auto *menu_button = new Object;
+    auto *menu_button_ui = new UIComponent;
+    auto *menu_button_sprite = new SpriteComponent(Constants::MENU_BUTTON_PATH);
+    menu_button_ui->hover_surface = SDL_LoadBMP(Constants::MENU_BUTTON_HOVER_PATH.c_str());
+    menu_button_ui->click = &MenuButtonClick;
+    menu_button_sprite->rect = new SDL_Rect;
+    menu_button->AddComponent(menu_button_ui);
+    menu_button->AddComponent(menu_button_sprite);
+    AddObject(menu_button);
 }
 
 void GameScene::OnUnload()
