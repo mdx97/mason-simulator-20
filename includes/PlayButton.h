@@ -15,7 +15,6 @@ public:
 
 private:
     SDL_Surface *normal, *hover;
-    AudioClip *clip;
 };
 
 #endif

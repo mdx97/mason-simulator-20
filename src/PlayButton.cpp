@@ -1,7 +1,9 @@
 #include <iostream>
 #include "engine/AudioSystem.h"
 #include "engine/Mouse.h"
+#include "engine/SceneSystem.h"
 #include "Constants.h"
+#include "GameScene.h"
 #include "PlayButton.h"
 
 PlayButton::PlayButton()
@@ -9,14 +11,12 @@ PlayButton::PlayButton()
     normal = SDL_LoadBMP(Constants::PLAY_BUTTON_PATH.c_str());
     hover = SDL_LoadBMP(Constants::PLAY_BUTTON_HOVER_PATH.c_str());
     surface = normal;
-    clip = new AudioClip(Constants::PLAY_BUTTON_SOUND_PATH);
 }
 
 PlayButton::~PlayButton()
 {
     SDL_FreeSurface(normal);
     SDL_FreeSurface(hover);
-    delete clip;
 }
 
 void PlayButton::Hover() 
@@ -31,7 +31,6 @@ void PlayButton::Unhover()
 
 void PlayButton::Click()
 {
-    AudioSystem::FreeClip(clip);
-    clip->Reset();
-    AudioSystem::PlayClip(clip);
+    GameScene *scene = new GameScene;
+    SceneSystem::Load(scene);
 }
