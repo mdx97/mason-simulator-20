@@ -5,6 +5,8 @@
 
 std::vector<AudioClip *> playing;
 
+// Handles calling every currently playing audio clips' audio callback functions, 
+// and then combines the resulting audio streams into one.
 void AudioCallback(void *userdata, Uint8 *stream, int len)
 {
     std::vector<Uint8 *> streams;
@@ -54,14 +56,14 @@ void AudioSystem::PlayClip(AudioClip *clip)
 
     if (playing.size() == 0)
         Initialize();
-        
+
     playing.push_back(clip);
 }
 
+// Stops playing the given clip.
 void AudioSystem::FreeClip(AudioClip *clip)
 {
     auto element = std::find(playing.begin(), playing.end(), clip);
-    if (element != playing.end()) {
+    if (element != playing.end())
         playing.erase(element);
-    }
 }

@@ -38,11 +38,13 @@ void AudioClip::Callback(void *userdata, Uint8 *stream, int len)
     }
 }
 
+// Moves the pointer back to the beginning of the audio data.
 void AudioClip::Reset()
 {
     pointer = buffer;
 }
 
+// Returns whether or not the AudioClip was properly initialized.
 bool AudioClip::Good()
 {
     return buffer != nullptr;
@@ -58,6 +60,6 @@ void LoopedAudioClip::Callback(void *userdata, Uint8 *stream, int len)
 
         // If we have reached the end of our clip's audio buffer, wrap around to the beginning.
         if (pointer == buffer + length)
-            pointer = buffer;
+            Reset();
     }
 }
