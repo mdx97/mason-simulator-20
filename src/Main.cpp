@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
-#include "AudioClip.h"
-#include "AudioSystem.h"
+#include "engine/AudioClip.h"
+#include "engine/AudioSystem.h"
+#include "engine/Engine.h"
+#include "engine/EventSystem.h"
+#include "engine/RenderSystem.h"
+#include "engine/SceneSystem.h"
 #include "Constants.h"
-#include "Engine.h"
-#include "EventSystem.h"
 #include "MainMenuScene.h"
-#include "RenderSystem.h"
-#include "SceneSystem.h"
 #include "SDL.h"
 
 int main(int argc, char *argv[])

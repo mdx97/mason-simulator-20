@@ -1,7 +1,7 @@
 #include <iostream>
-#include "AudioSystem.h"
+#include "engine/AudioSystem.h"
+#include "engine/Mouse.h"
 #include "Constants.h"
-#include "Mouse.h"
 #include "PlayButton.h"
 
 PlayButton::PlayButton()
