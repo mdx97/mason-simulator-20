@@ -16,6 +16,16 @@ public:
         components.push_back(component);
         component->object = this;
     }
+
+    template <typename T>T* GetComponent()
+    {
+        T *casted = nullptr;
+        for (auto component : components) {
+            casted = dynamic_cast<T *>(component);
+            if (casted != nullptr) break;
+        }
+        return casted;
+    }
 };
 
 #endif

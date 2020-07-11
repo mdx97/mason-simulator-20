@@ -11,11 +11,9 @@ void RenderSystem::Draw()
     SDL_FillRect(background, NULL, SDL_MapRGB(background->format, 0, 0, 0));
     if (SceneSystem::current == NULL) return;
     for (auto object : SceneSystem::current->objects) {
-        for (auto component : object->components) {
-            auto sprite = dynamic_cast<SpriteComponent *>(component);
-            if (sprite != nullptr)
-                SDL_BlitSurface(sprite->surface, NULL, background, sprite->rect);
-        }
+        auto sprite = object->GetComponent<SpriteComponent>();
+        if (sprite != nullptr)
+            SDL_BlitSurface(sprite->surface, NULL, background, sprite->rect);
     }
     SDL_UpdateWindowSurface(Engine::window);
 }
