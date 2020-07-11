@@ -20,6 +20,7 @@ void SceneSystem::Tick()
 {
     if (current == NULL) return;
     for (auto object : current->objects) {
-        object->Update();
+        for (auto component : object->components)
+            component->Update();
     }
 }
