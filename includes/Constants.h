@@ -11,6 +11,7 @@ namespace Constants {
     const std::string PLAY_BUTTON_PATH = "resources/PlayButton.bmp";
     const std::string PLAY_BUTTON_HOVER_PATH = "resources/PlayButtonHover.bmp";
     const std::string PLAY_BUTTON_SOUND_PATH = "resources/play.wav";
+    const std::string LOG_FILE_PATH = "log.txt";
 };
 
 #endif

@@ -11,6 +11,7 @@ public:
     ~AudioClip();
     virtual void Callback(void *userdata, Uint8 *stream, int len);
     void Reset();
+    bool Good();
     
 protected:
     SDL_AudioSpec audio_spec;

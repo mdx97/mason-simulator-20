@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <vector>
 #include "engine/AudioSystem.h"
+#include "engine/Logger.h"
 
 std::vector<AudioClip *> playing;
 
@@ -46,8 +47,14 @@ void Initialize()
 // Begins playing the given audio clip.
 void AudioSystem::PlayClip(AudioClip *clip)
 {
+    if (!clip->Good()) {
+        Logger::Write("Skipping queueing up uninitialized AudioClip...");
+        return;
+    }
+
     if (playing.size() == 0)
         Initialize();
+        
     playing.push_back(clip);
 }
 

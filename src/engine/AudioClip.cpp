@@ -1,10 +1,19 @@
+#include <sstream>
 #include "engine/AudioClip.h"
 #include "engine/AudioSystem.h"
+#include "engine/Logger.h"
 
 AudioClip::AudioClip(const std::string &filepath)
 {
-    // todo: handle error
-    SDL_LoadWAV(filepath.c_str(), &audio_spec, &buffer, &length);
+    if (SDL_LoadWAV(filepath.c_str(), &audio_spec, &buffer, &length) == NULL) {
+        std::ostringstream stream;
+        stream << "Error occured loading WAV file at path '" << filepath << "'! Zeroing AudioClip properties...";
+        Logger::Write(stream.str());
+        SDL_zero(audio_spec);
+        buffer = nullptr;
+        length = 0;
+    }
+
     Reset();
 }
 
@@ -32,6 +41,11 @@ void AudioClip::Callback(void *userdata, Uint8 *stream, int len)
 void AudioClip::Reset()
 {
     pointer = buffer;
+}
+
+bool AudioClip::Good()
+{
+    return buffer != nullptr;
 }
 
 // Populates the audio buffer (stream) with audio data to be played.
