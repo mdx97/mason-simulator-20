@@ -3,17 +3,17 @@
 #include "engine/SceneSystem.h"
 #include "engine/SpriteComponent.h"
 
-SDL_Surface *RenderSystem::background = NULL;
+SDL_Surface *RenderSystem::background = nullptr;
 
 // Renders every object in the current scene.
 void RenderSystem::Draw()
 {
-    SDL_FillRect(background, NULL, SDL_MapRGB(background->format, 0, 0, 0));
-    if (SceneSystem::current == NULL) return;
-    for (auto object : SceneSystem::current->objects) {
-        auto sprite = object->GetComponent<SpriteComponent>();
+    SDL_FillRect(background, nullptr, SDL_MapRGB(background->format, 0, 0, 0));
+    if (SceneSystem::current == nullptr) return;
+    for (Object *object : SceneSystem::current->objects) {
+        SpriteComponent *sprite = object->GetComponent<SpriteComponent>();
         if (sprite != nullptr)
-            SDL_BlitSurface(sprite->surface, NULL, background, sprite->rect);
+            SDL_BlitSurface(sprite->surface, nullptr, background, sprite->rect);
     }
     SDL_UpdateWindowSurface(Engine::window);
 }

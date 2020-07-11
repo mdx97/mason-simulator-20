@@ -11,8 +11,8 @@ public:
     SpriteComponent(const std::string &image_path);
     ~SpriteComponent();
     void Update() { }
-    SDL_Surface *surface;
-    SDL_Rect *rect; // todo: proper memory management for this.
+    SDL_Surface *surface = nullptr;
+    SDL_Rect *rect = nullptr; // todo: proper memory management for this.
 };
 
 #endif

@@ -7,7 +7,7 @@ class Component
 {
 public:
     virtual void Update() = 0;
-    Object *object;
+    Object *object = nullptr;
 };
 
 #include "engine/Object.h"

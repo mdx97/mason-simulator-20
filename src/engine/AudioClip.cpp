@@ -5,7 +5,7 @@
 
 AudioClip::AudioClip(const std::string &filepath)
 {
-    if (SDL_LoadWAV(filepath.c_str(), &audio_spec, &buffer, &length) == NULL) {
+    if (SDL_LoadWAV(filepath.c_str(), &audio_spec, &buffer, &length) == nullptr) {
         std::ostringstream stream;
         stream << "Error occured loading WAV file at path '" << filepath << "'! Zeroing AudioClip properties...";
         Logger::Write(stream.str());

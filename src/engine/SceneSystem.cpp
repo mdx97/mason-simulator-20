@@ -1,26 +1,30 @@
 #include <iostream>
 #include "engine/SceneSystem.h"
 
-Scene *SceneSystem::current = NULL;
+Scene *SceneSystem::current = nullptr;
+Scene *next = nullptr;
 
 // Loads a new scene to be played.
 void SceneSystem::Load(Scene *scene)
 {
-    if (current != NULL) {
-        current->OnUnload();
-        // todo: we need to free this memory, but for some reason doing it like this is causing an error.
-        //delete current;
-    }
-    current = scene;
-    scene->OnLoad();
+    next = scene;
 }
 
 // Updates every object in the current scene.
 void SceneSystem::Tick()
 {
-    if (current == NULL) return;
-    for (auto object : current->objects) {
-        for (auto component : object->components)
+    if (next != nullptr) {
+        if (current != nullptr)
+            current->OnUnload();
+        current = next;
+        current->OnLoad();
+        next = nullptr;
+    }
+
+    if (current == nullptr) return;
+
+    for (auto *object : current->objects) {
+        for (auto *component : object->components)
             component->Update();
     }
 }

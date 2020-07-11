@@ -15,8 +15,8 @@ public:
     
 protected:
     SDL_AudioSpec audio_spec;
-    Uint8 *buffer;
-    Uint8 *pointer;
+    Uint8 *buffer = nullptr;
+    Uint8 *pointer = nullptr;
     Uint32 length;
 };
 
