@@ -14,7 +14,7 @@ void DrawObjects(const std::vector<Object *> &objects)
     }
 }
 
-// Renders every object in the current scene.
+// Renders every object onto the background surface.
 void RenderSystem::Draw()
 {
     SDL_FillRect(background, nullptr, SDL_MapRGB(background->format, 0, 0, 0));
