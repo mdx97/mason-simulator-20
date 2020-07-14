@@ -4,6 +4,7 @@
 #include "engine/Logger.h"
 
 std::vector<AudioClip *> playing;
+SDL_AudioDeviceID device_id = 0;
 
 // Handles calling every currently playing audio clips' audio callback functions, 
 // and then combines the resulting audio streams into one.
@@ -44,7 +45,7 @@ void Initialize()
     want.callback = &AudioCallback;
 
     // todo: handle errors.
-    SDL_AudioDeviceID device_id = SDL_OpenAudioDevice(device, 0, &want, &have, 0);
+    device_id = SDL_OpenAudioDevice(device, 0, &want, &have, 0);
     SDL_PauseAudioDevice(device_id, 0);
 }
 
@@ -68,4 +69,10 @@ void AudioSystem::FreeClip(AudioClip *clip)
     auto element = std::find(playing.begin(), playing.end(), clip);
     if (element != playing.end())
         playing.erase(element);
+}
+
+// Controls whether or not audio is played.
+void AudioSystem::ToggleSound(bool on)
+{
+    SDL_PauseAudioDevice(device_id, static_cast<int>(!on));
 }

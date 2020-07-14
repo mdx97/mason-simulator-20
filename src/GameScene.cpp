@@ -6,6 +6,7 @@
 #include "engine/Utility.h"
 #include "Constants.h"
 #include "GameScene.h"
+#include "GameUtility.h"
 #include "MainMenuScene.h"
 
 void MenuButtonClick(Object *object)
@@ -30,6 +31,8 @@ void GameScene::OnLoad()
     menu_button->AddComponent(menu_button_ui);
     menu_button->AddComponent(menu_button_sprite);
     AddObject(menu_button);
+
+    GameUtility::CreateSoundControl(this);
 }
 
 void GameScene::OnUnload()

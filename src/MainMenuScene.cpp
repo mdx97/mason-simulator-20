@@ -6,6 +6,7 @@
 #include "engine/UIComponent.h"
 #include "Constants.h"
 #include "GameScene.h"
+#include "GameUtility.h"
 #include "MainMenuScene.h"
 
 void PlayButtonClickHandler(Object *object)
@@ -40,6 +41,8 @@ void MainMenuScene::OnLoad()
     trademark_sprite->rect.y = 465;
     trademark->AddComponent(trademark_sprite);
     AddObject(trademark);
+
+    GameUtility::CreateSoundControl(this);
 }
 
 void MainMenuScene::OnUnload()
