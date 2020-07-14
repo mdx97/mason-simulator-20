@@ -1,6 +1,8 @@
 #include <iostream>
 #include "engine/Engine.h"
+#include "engine/EventSystem.h"
 #include "engine/RenderSystem.h"
+#include "engine/SceneSystem.h"
 
 SDL_Window *Engine::window = nullptr;
 
@@ -21,6 +23,18 @@ void Engine::Start(const std::string &title, int width, int height)
     }
 
     RenderSystem::background = SDL_GetWindowSurface(window);
+}
+
+// Runs the main game loop until the user exits the program.
+void Engine::Run()
+{
+    while (!EventSystem::exit) {
+        EventSystem::Process();
+        SceneSystem::Tick();
+        RenderSystem::Draw();
+    }
+
+    End();
 }
 
 // Cleans up any engine allocated memory.

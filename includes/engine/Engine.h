@@ -7,6 +7,7 @@
 namespace Engine {
     extern SDL_Window *window;
     void Start(const std::string &title, int width, int height);
+    void Run();
     void End();
 };
 
