@@ -29,6 +29,7 @@ void MainMenuScene::OnLoad()
     play_ui->hover_surface = SDL_LoadBMP(Constants::PLAY_BUTTON_HOVER_PATH.c_str());
     play_ui->click = &PlayButtonClickHandler;
     Utility::CenterRect(&play_sprite->rect, play_sprite->surface, RenderSystem::background);
+    play_sprite->rect.y = 300;
     play->AddComponent(play_ui);
     play->AddComponent(play_sprite);
     AddObject(play);
