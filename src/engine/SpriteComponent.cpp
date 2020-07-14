@@ -4,10 +4,10 @@
 SpriteComponent::SpriteComponent(const std::string &image_path)
 {
     surface = SDL_LoadBMP(image_path.c_str());
+    SDL_zero(rect);
 }
 
 SpriteComponent::~SpriteComponent()
 {
     SDL_FreeSurface(surface);
-    delete rect;
 }

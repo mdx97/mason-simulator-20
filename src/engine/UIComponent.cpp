@@ -6,7 +6,7 @@ void UIComponent::Update()
 {
     auto *sprite = object->GetComponent<SpriteComponent>();
     if (sprite != nullptr) {
-        if (SDL_PointInRect(&Mouse::position, sprite->rect)) {
+        if (SDL_PointInRect(&Mouse::position, &sprite->rect)) {
             if (hover_surface != nullptr) {
                 if (original_surface == nullptr)
                     original_surface = sprite->surface;

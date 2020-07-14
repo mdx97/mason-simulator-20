@@ -1,4 +1,5 @@
 #include "engine/Object.h"
+#include "engine/RenderSystem.h"
 #include "engine/SceneSystem.h"
 #include "engine/SpriteComponent.h"
 #include "engine/Utility.h"
@@ -17,8 +18,8 @@ void MainMenuScene::OnLoad()
 {
     auto *logo = new Object;
     auto *logo_sprite = new SpriteComponent(Constants::LOGO_PATH);
-    logo_sprite->rect = Utility::CreateCenterRect(logo_sprite->surface->w, logo_sprite->surface->h, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT);
-    logo_sprite->rect->y = 20;
+    Utility::CenterRect(&logo_sprite->rect, logo_sprite->surface, RenderSystem::background);
+    logo_sprite->rect.y = 20;
     logo->AddComponent(logo_sprite);
     AddObject(logo);
 
@@ -27,15 +28,15 @@ void MainMenuScene::OnLoad()
     auto *play_sprite = new SpriteComponent(Constants::PLAY_BUTTON_PATH);
     play_ui->hover_surface = SDL_LoadBMP(Constants::PLAY_BUTTON_HOVER_PATH.c_str());
     play_ui->click = &PlayButtonClickHandler;
-    play_sprite->rect = Utility::CreateCenterRect(play_sprite->surface->w, play_sprite->surface->h, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT);
+    Utility::CenterRect(&play_sprite->rect, play_sprite->surface, RenderSystem::background);
     play->AddComponent(play_ui);
     play->AddComponent(play_sprite);
     AddObject(play);
 
     auto *trademark = new Object;
     auto *trademark_sprite = new SpriteComponent(Constants::TRADEMARK_PATH);
-    trademark_sprite->rect = Utility::CreateCenterRect(trademark_sprite->surface->w, trademark_sprite->surface->h, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT);
-    trademark_sprite->rect->y = 465;
+    Utility::CenterRect(&trademark_sprite->rect, trademark_sprite->surface, RenderSystem::background);
+    trademark_sprite->rect.y = 465;
     trademark->AddComponent(trademark_sprite);
     AddObject(trademark);
 }

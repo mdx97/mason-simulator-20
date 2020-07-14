@@ -12,7 +12,7 @@ public:
     ~SpriteComponent();
     void Update() { }
     SDL_Surface *surface = nullptr;
-    SDL_Rect *rect = nullptr;
+    SDL_Rect rect;
 };
 
 #endif

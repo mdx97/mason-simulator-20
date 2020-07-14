@@ -13,7 +13,7 @@ void RenderSystem::Draw()
     for (Object *object : SceneSystem::current->objects) {
         SpriteComponent *sprite = object->GetComponent<SpriteComponent>();
         if (sprite != nullptr)
-            SDL_BlitSurface(sprite->surface, nullptr, background, sprite->rect);
+            SDL_BlitSurface(sprite->surface, nullptr, background, &sprite->rect);
     }
     SDL_UpdateWindowSurface(Engine::window);
 }
