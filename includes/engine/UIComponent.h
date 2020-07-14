@@ -10,7 +10,11 @@ public:
     void Update();
     SDL_Surface *hover_surface = nullptr;
     void (*click)(Object *);
+
 private:
+    void HandleClick();
+    void Hover(SpriteComponent *sprite);
+    void Unhover(SpriteComponent *sprite);
     SDL_Surface *original_surface = nullptr;
 };
 

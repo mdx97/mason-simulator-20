@@ -27,6 +27,8 @@ void AudioCallback(void *userdata, Uint8 *stream, int len)
         delete istream;
 }
 
+// Opens the default audio device to allow for audio playback.
+// Lazily called from AudioSystem::PlayClip()
 void Initialize()
 {
     // todo: handle errors.
