@@ -15,6 +15,13 @@ void PlayButtonClickHandler(Object *object)
 
 void MainMenuScene::OnLoad()
 {
+    auto *logo = new Object;
+    auto *logo_sprite = new SpriteComponent(Constants::LOGO_PATH);
+    logo_sprite->rect = Utility::CreateCenterRect(logo_sprite->surface->w, logo_sprite->surface->h, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT);
+    logo_sprite->rect->y = 20;
+    logo->AddComponent(logo_sprite);
+    AddObject(logo);
+
     auto *play = new Object;
     auto *play_ui = new UIComponent;
     auto *play_sprite = new SpriteComponent(Constants::PLAY_BUTTON_PATH);
@@ -24,6 +31,13 @@ void MainMenuScene::OnLoad()
     play->AddComponent(play_ui);
     play->AddComponent(play_sprite);
     AddObject(play);
+
+    auto *trademark = new Object;
+    auto *trademark_sprite = new SpriteComponent(Constants::TRADEMARK_PATH);
+    trademark_sprite->rect = Utility::CreateCenterRect(trademark_sprite->surface->w, trademark_sprite->surface->h, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT);
+    trademark_sprite->rect->y = 465;
+    trademark->AddComponent(trademark_sprite);
+    AddObject(trademark);
 }
 
 void MainMenuScene::OnUnload()
