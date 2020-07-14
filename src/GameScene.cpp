@@ -31,8 +31,6 @@ void GameScene::OnLoad()
     menu_button->AddComponent(menu_button_ui);
     menu_button->AddComponent(menu_button_sprite);
     AddObject(menu_button);
-
-    GameUtility::CreateSoundControl(this);
 }
 
 void GameScene::OnUnload()

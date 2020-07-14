@@ -4,7 +4,7 @@
 #include "engine/Scene.h"
 
 namespace GameUtility {
-    void CreateSoundControl(Scene *scene);
+    Object *CreateSoundControl();
 };
 
 #endif

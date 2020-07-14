@@ -24,7 +24,7 @@ void ToggleSound(Object *object)
 // Adds the sound control that is shared across both scenes.
 // todo: This function should be completely temporary as I plan on
 // adding a way to create objects that persist across scene changes.
-void GameUtility::CreateSoundControl(Scene *scene)
+Object *GameUtility::CreateSoundControl()
 {
     auto *sound = new Object;
     auto *sound_sprite = new SpriteComponent(!muted ? Constants::SOUND_TOGGLE_ON : Constants::SOUND_TOGGLE_OFF);
@@ -34,10 +34,11 @@ void GameUtility::CreateSoundControl(Scene *scene)
     sound_ui->click = &ToggleSound;
     sound->AddComponent(sound_sprite);
     sound->AddComponent(sound_ui);
-    scene->AddObject(sound);
 
     if (sound_surface == nullptr) {
         sound_surface = sound_sprite->surface;
         muted_surface = SDL_LoadBMP(Constants::SOUND_TOGGLE_OFF.c_str());
     }
+
+    return sound;
 }

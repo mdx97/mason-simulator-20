@@ -5,15 +5,21 @@
 
 SDL_Surface *RenderSystem::background = nullptr;
 
+void DrawObjects(const std::vector<Object *> &objects)
+{
+    for (auto *object : objects) {
+        SpriteComponent *sprite = object->GetComponent<SpriteComponent>();
+        if (sprite != nullptr)
+            SDL_BlitSurface(sprite->surface, nullptr, RenderSystem::background, &sprite->rect);
+    }
+}
+
 // Renders every object in the current scene.
 void RenderSystem::Draw()
 {
     SDL_FillRect(background, nullptr, SDL_MapRGB(background->format, 0, 0, 0));
-    if (SceneSystem::current == nullptr) return;
-    for (Object *object : SceneSystem::current->objects) {
-        SpriteComponent *sprite = object->GetComponent<SpriteComponent>();
-        if (sprite != nullptr)
-            SDL_BlitSurface(sprite->surface, nullptr, background, &sprite->rect);
-    }
+    if (SceneSystem::current != nullptr)
+        DrawObjects(SceneSystem::current->objects);
+    DrawObjects(SceneSystem::persistent_objects);
     SDL_UpdateWindowSurface(Engine::window);
 }

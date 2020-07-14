@@ -41,8 +41,6 @@ void MainMenuScene::OnLoad()
     trademark_sprite->rect.y = 465;
     trademark->AddComponent(trademark_sprite);
     AddObject(trademark);
-
-    GameUtility::CreateSoundControl(this);
 }
 
 void MainMenuScene::OnUnload()
