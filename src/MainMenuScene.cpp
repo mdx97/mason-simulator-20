@@ -1,5 +1,6 @@
 #include "engine/Object.h"
 #include "engine/RenderSystem.h"
+#include "engine/ResourceManager.h"
 #include "engine/SceneSystem.h"
 #include "engine/SpriteComponent.h"
 #include "engine/Utility.h"
@@ -18,7 +19,7 @@ void PlayButtonClickHandler(Object *object)
 void MainMenuScene::OnLoad()
 {
     auto *logo = new Object;
-    auto *logo_sprite = new SpriteComponent(Constants::LOGO_PATH);
+    auto *logo_sprite = new SpriteComponent(ResourceManager::GetImagePath("Logo"));
     Utility::CenterRect(&logo_sprite->rect, logo_sprite->surface, RenderSystem::background);
     logo_sprite->rect.y = 20;
     logo->AddComponent(logo_sprite);
@@ -26,8 +27,8 @@ void MainMenuScene::OnLoad()
 
     auto *play = new Object;
     auto *play_ui = new UIComponent;
-    auto *play_sprite = new SpriteComponent(Constants::PLAY_BUTTON_PATH);
-    play_ui->hover_surface = SDL_LoadBMP(Constants::PLAY_BUTTON_HOVER_PATH.c_str());
+    auto *play_sprite = new SpriteComponent(ResourceManager::GetImagePath("PlayButton"));
+    play_ui->hover_surface = SDL_LoadBMP(ResourceManager::GetImagePath("PlayButtonHover").c_str());
     play_ui->click = &PlayButtonClickHandler;
     Utility::CenterRect(&play_sprite->rect, play_sprite->surface, RenderSystem::background);
     play_sprite->rect.y = 300;
@@ -36,7 +37,7 @@ void MainMenuScene::OnLoad()
     AddObject(play);
 
     auto *trademark = new Object;
-    auto *trademark_sprite = new SpriteComponent(Constants::TRADEMARK_PATH);
+    auto *trademark_sprite = new SpriteComponent(ResourceManager::GetImagePath("Trademark"));
     Utility::CenterRect(&trademark_sprite->rect, trademark_sprite->surface, RenderSystem::background);
     trademark_sprite->rect.y = 465;
     trademark->AddComponent(trademark_sprite);

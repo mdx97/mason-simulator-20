@@ -1,5 +1,6 @@
 #include "engine/AudioSystem.h"
 #include "engine/Object.h"
+#include "engine/ResourceManager.h"
 #include "engine/SpriteComponent.h"
 #include "engine/UIComponent.h"
 #include "Constants.h"
@@ -27,7 +28,7 @@ void ToggleSound(Object *object)
 Object *GameUtility::CreateSoundControl()
 {
     auto *sound = new Object;
-    auto *sound_sprite = new SpriteComponent(!muted ? Constants::SOUND_TOGGLE_ON : Constants::SOUND_TOGGLE_OFF);
+    auto *sound_sprite = new SpriteComponent(!muted ? ResourceManager::GetImagePath("Sound") : ResourceManager::GetImagePath("Mute"));
     auto *sound_ui = new UIComponent;
     sound_sprite->rect.x = 611;
     sound_sprite->rect.y = 5;
@@ -37,7 +38,7 @@ Object *GameUtility::CreateSoundControl()
 
     if (sound_surface == nullptr) {
         sound_surface = sound_sprite->surface;
-        muted_surface = SDL_LoadBMP(Constants::SOUND_TOGGLE_OFF.c_str());
+        muted_surface = SDL_LoadBMP(ResourceManager::GetImagePath("Mute").c_str());
     }
 
     return sound;

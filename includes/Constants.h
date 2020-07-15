@@ -11,18 +11,6 @@ namespace Constants {
     const int SCREEN_HEIGHT = 480;
 
     const std::string LOG_FILE_PATH = "log.txt";
-
-    const std::string THEME_SONG_PATH = "resources/theme.wav";
-
-    const std::string LOGO_PATH = "resources/Logo.bmp";
-    const std::string MENU_BUTTON_PATH = "resources/Menu.bmp";
-    const std::string MENU_BUTTON_HOVER_PATH = "resources/MenuHover.bmp";
-    const std::string PLAY_BUTTON_PATH = "resources/PlayButton.bmp";
-    const std::string PLAY_BUTTON_HOVER_PATH = "resources/PlayButtonHover.bmp";
-    const std::string PLAYING_AREA_PATH = "resources/PlayingArea.bmp";
-    const std::string SOUND_TOGGLE_OFF = "resources/Mute.bmp";
-    const std::string SOUND_TOGGLE_ON = "resources/Sound.bmp";
-    const std::string TRADEMARK_PATH = "resources/Trademark.bmp";
 };
 
 #endif

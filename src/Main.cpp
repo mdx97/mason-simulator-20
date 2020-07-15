@@ -4,6 +4,7 @@
 #include "engine/AudioSystem.h"
 #include "engine/Engine.h"
 #include "engine/Logger.h"
+#include "engine/ResourceManager.h"
 #include "engine/SceneSystem.h"
 #include "Constants.h"
 #include "GameUtility.h"
@@ -15,8 +16,8 @@ int main(int argc, char *argv[])
     Logger::SetFile(Constants::LOG_FILE_PATH);
     Engine::Start(Constants::TITLE, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT);
 
-    // LoopedAudioClip theme(Constants::THEME_SONG_PATH);
-    // AudioSystem::PlayClip(&theme);
+    LoopedAudioClip theme(ResourceManager::GetAudioPath("Theme"));
+    AudioSystem::PlayClip(&theme);
     
     SceneSystem::AddPersistentObject(GameUtility::CreateSoundControl());
 
