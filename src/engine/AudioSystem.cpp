@@ -11,6 +11,7 @@ SDL_AudioDeviceID device_id = 0;
 void AudioCallback(void *userdata, Uint8 *stream, int len)
 {
     std::vector<Uint8 *> streams;
+    
     for (int i = 0; i < playing.size(); i++) {
         Uint8 *streamptr = new Uint8[len];
         streams.push_back(streamptr);
@@ -21,6 +22,7 @@ void AudioCallback(void *userdata, Uint8 *stream, int len)
         int total = 0;
         for (auto istream : streams)
             total += istream[i];
+        
         stream[i] = total;
     }
 

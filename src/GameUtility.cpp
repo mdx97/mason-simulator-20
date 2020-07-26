@@ -17,7 +17,9 @@ void ToggleSound(Object *object)
 {
     muted = !muted;
     AudioSystem::ToggleSound(!muted);
+    
     auto *sprite = object->GetComponent<SpriteComponent>();
+    
     if (sprite != nullptr) 
         sprite->surface = !muted ? sound_surface : muted_surface;
 }
@@ -28,11 +30,14 @@ void ToggleSound(Object *object)
 Object *GameUtility::CreateSoundControl()
 {
     auto *sound = new Object;
+
     auto *sound_sprite = new SpriteComponent(!muted ? ResourceManager::GetImagePath("Sound") : ResourceManager::GetImagePath("Mute"));
-    auto *sound_ui = new UIComponent;
     sound_sprite->rect.x = 611;
     sound_sprite->rect.y = 5;
+
+    auto *sound_ui = new UIComponent;
     sound_ui->click = &ToggleSound;
+    
     sound->AddComponent(sound_sprite);
     sound->AddComponent(sound_ui);
 

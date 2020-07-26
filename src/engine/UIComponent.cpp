@@ -28,6 +28,7 @@ void UIComponent::Hover(SpriteComponent *sprite)
     if (hover_surface != nullptr && sprite->surface != hover_surface) {
         if (original_surface == nullptr)
             original_surface = sprite->surface;
+        
         sprite->surface = hover_surface;
     }
 }

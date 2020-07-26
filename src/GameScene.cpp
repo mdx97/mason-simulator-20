@@ -18,19 +18,24 @@ void MenuButtonClick(Object *object)
 
 void GameScene::OnLoad()
 {
+    // Playing Area
     auto *area = new Object;
     auto *area_sprite = new SpriteComponent(ResourceManager::GetImagePath("PlayingArea"));
     Utility::CenterRect(&area_sprite->rect, area_sprite->surface, RenderSystem::background);
     area->AddComponent(area_sprite);
     AddObject(area);
-
+    
+    // Menu Button
     auto *menu_button = new Object;
-    auto *menu_button_ui = new UIComponent;
     auto *menu_button_sprite = new SpriteComponent(ResourceManager::GetImagePath("Menu"));
+
+    auto *menu_button_ui = new UIComponent;
     menu_button_ui->hover_surface = SDL_LoadBMP(ResourceManager::GetImagePath("MenuHover").c_str());
     menu_button_ui->click = &MenuButtonClick;
+
     menu_button->AddComponent(menu_button_ui);
     menu_button->AddComponent(menu_button_sprite);
+
     AddObject(menu_button);
 }
 

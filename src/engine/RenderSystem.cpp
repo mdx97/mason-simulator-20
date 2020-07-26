@@ -18,8 +18,10 @@ void DrawObjects(const std::vector<Object *> &objects)
 void RenderSystem::Draw()
 {
     SDL_FillRect(background, nullptr, SDL_MapRGB(background->format, 0, 0, 0));
+    
+    DrawObjects(SceneSystem::persistent_objects);
     if (SceneSystem::current != nullptr)
         DrawObjects(SceneSystem::current->objects);
-    DrawObjects(SceneSystem::persistent_objects);
+    
     SDL_UpdateWindowSurface(Engine::window);
 }
