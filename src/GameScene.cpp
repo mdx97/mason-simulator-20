@@ -1,4 +1,5 @@
 #include <iostream>
+#include "engine/CollisionComponent.h"
 #include "engine/Object.h"
 #include "engine/RenderSystem.h"
 #include "engine/ResourceManager.h"
@@ -181,32 +182,56 @@ Block *GameScene::CreateLBlock()
 
 Block *GameScene::CreateOBlock()
 {
+    // First block.
     auto *block1 = new Object;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
+    auto *block1_collision = new CollisionComponent(block1_sprite->surface->w, block1_sprite->surface->h);
+
     Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
+
     block1->AddComponent(block1_sprite);
+    block1->AddComponent(block1_collision);
+
     AddObject(block1);
 
+    // Second block.
     auto *block2 = new Object;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
+    auto *block2_collision = new CollisionComponent(block2_sprite->surface->w, block2_sprite->surface->h);
+
     Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
     block2->y -= 32;
+
     block2->AddComponent(block2_sprite);
+    block2->AddComponent(block2_collision);
+
     AddObject(block2);
 
+    // Third block.
     auto *block3 = new Object;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
+    auto *block3_collision = new CollisionComponent(block3_sprite->surface->w, block3_sprite->surface->h);
+
     Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
     block3->x += 32;
     block3->y -= 32;
+
     block3->AddComponent(block3_sprite);
+    block3->AddComponent(block3_collision);
+
     AddObject(block3);
 
+    // Fourth block.
     auto *block4 = new Object;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
+    auto *block4_collision = new CollisionComponent(block4_sprite->surface->w, block4_sprite->surface->h);
+
     Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
     block4->x += 32;
+
     block4->AddComponent(block4_sprite);
+    block4->AddComponent(block4_collision);
+
     AddObject(block4);
 
     return new Block(block1, block2, block3, block4);
@@ -300,7 +325,7 @@ void GameScene::OnLoad()
     AddObject(menu_button);
 
     // Create block.
-    current_block = CreateTBlock(); // @TODO: Spawn random block.
+    current_block = CreateOBlock(); // @TODO: Spawn random block.
 }
 
 void GameScene::OnUnload()
@@ -315,14 +340,33 @@ void GameScene::Update(float elapsed)
     // @TODO: Probably move these into constructor or OnLoad()?
     static const int drop_step = 1;
     static const int min_y = 384;
+    static const int drop = 32;
     static float since_last_drop = 0;
     
     since_last_drop += elapsed;
 
     if (since_last_drop >= drop_step) {
-        current_block->Translate(0, 32);
+        bool can_drop = true;
+        auto *current_block_collider = current_block->block1->GetComponent<CollisionComponent>();
+
+        for (auto *object : this->objects) {
+            auto *collision_component = object->GetComponent<CollisionComponent>();
+            if (collision_component != nullptr) {
+                if (current_block->block1->y + current_block_collider->y + current_block_collider->h == object->y + collision_component->y) {
+                    can_drop = false;
+                }
+            }
+        }
+
+        if (!can_drop) {
+            current_block = CreateOBlock();
+            return;
+        }
+
+        current_block->Translate(0, drop);
         since_last_drop = 0;
 
+        // @TODO: Add collider instead.
         if (current_block->block1->y == min_y) {
             current_block = CreateOBlock(); // @TODO: Spawn random block.
         }
