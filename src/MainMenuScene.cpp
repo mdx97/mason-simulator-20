@@ -21,8 +21,8 @@ void MainMenuScene::OnLoad()
     // Logo
     auto *logo = new Object;
     auto *logo_sprite = new SpriteComponent(ResourceManager::GetImagePath("Logo"));
-    Utility::CenterRect(&logo_sprite->rect, logo_sprite->surface, RenderSystem::background);
-    logo_sprite->rect.y = 20;
+    Utility::CenterObject(logo, RenderSystem::background, logo_sprite->surface->w, logo_sprite->surface->h);
+    logo->y = 20;
     logo->AddComponent(logo_sprite);
     AddObject(logo);
 
@@ -30,8 +30,8 @@ void MainMenuScene::OnLoad()
     auto *play = new Object;
 
     auto *play_sprite = new SpriteComponent(ResourceManager::GetImagePath("PlayButton"));
-    Utility::CenterRect(&play_sprite->rect, play_sprite->surface, RenderSystem::background);
-    play_sprite->rect.y = 300;
+    Utility::CenterObject(play, RenderSystem::background, play_sprite->surface->w, play_sprite->surface->h);
+    play->y = 300;
 
     auto *play_ui = new UIComponent;
     play_ui->hover_surface = SDL_LoadBMP(ResourceManager::GetImagePath("PlayButtonHover").c_str());
@@ -45,8 +45,8 @@ void MainMenuScene::OnLoad()
     // Trademark
     auto *trademark = new Object;
     auto *trademark_sprite = new SpriteComponent(ResourceManager::GetImagePath("Trademark"));
-    Utility::CenterRect(&trademark_sprite->rect, trademark_sprite->surface, RenderSystem::background);
-    trademark_sprite->rect.y = 465;
+    Utility::CenterObject(trademark, RenderSystem::background, trademark_sprite->surface->w, trademark_sprite->surface->h);
+    trademark->y = 465;
     trademark->AddComponent(trademark_sprite);
     AddObject(trademark);
 }

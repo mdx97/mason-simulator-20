@@ -12,7 +12,7 @@ public:
     ~SpriteComponent();
     void Update(float elapsed) { }
     SDL_Surface *surface = nullptr;
-    SDL_Rect rect;
+    int x, y;
 };
 
 #endif

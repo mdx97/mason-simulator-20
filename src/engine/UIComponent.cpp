@@ -6,7 +6,14 @@ void UIComponent::Update(float elapsed)
 {
     auto *sprite = object->GetComponent<SpriteComponent>();
     if (sprite != nullptr) {
-        if (SDL_PointInRect(&Mouse::position, &sprite->rect)) {
+        // @TODO: Abstract this out into some function.
+        SDL_Rect rect;
+        rect.x = object->x + sprite->x;
+        rect.y = object->y + sprite->y;
+        rect.w = sprite->surface->w;
+        rect.h = sprite->surface->h;
+
+        if (SDL_PointInRect(&Mouse::position, &rect)) {
             Hover(sprite);
             HandleClick();
         } else {

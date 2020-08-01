@@ -29,15 +29,15 @@ public:
 
     void Translate(int x, int y)
     {
-        block1->GetComponent<SpriteComponent>()->rect.x += x;
-        block2->GetComponent<SpriteComponent>()->rect.x += x;
-        block3->GetComponent<SpriteComponent>()->rect.x += x;
-        block4->GetComponent<SpriteComponent>()->rect.x += x;
+        block1->x += x;
+        block2->x += x;
+        block3->x += x;
+        block4->x += x;
 
-        block1->GetComponent<SpriteComponent>()->rect.y += y;
-        block2->GetComponent<SpriteComponent>()->rect.y += y;
-        block3->GetComponent<SpriteComponent>()->rect.y += y;
-        block4->GetComponent<SpriteComponent>()->rect.y += y;
+        block1->y += y;
+        block2->y += y;
+        block3->y += y;
+        block4->y += y;
     }
 };
 
@@ -52,28 +52,28 @@ Block *GameScene::CreateIBlock()
 {
     auto *block1 = new Object;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("LightBlueBlock"));
-    Utility::CenterRect(&block1_sprite->rect, block1_sprite->surface, RenderSystem::background);
+    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
     block1->AddComponent(block1_sprite);
     AddObject(block1);
 
     auto *block2 = new Object;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("LightBlueBlock"));
-    Utility::CenterRect(&block2_sprite->rect, block2_sprite->surface, RenderSystem::background);
-    block2_sprite->rect.x -= 32;
+    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    block2->x -= 32;
     block2->AddComponent(block2_sprite);
     AddObject(block2);
 
     auto *block3 = new Object;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("LightBlueBlock"));
-    Utility::CenterRect(&block3_sprite->rect, block3_sprite->surface, RenderSystem::background);
-    block3_sprite->rect.x -= 64;
+    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    block3->x -= 64;
     block3->AddComponent(block3_sprite);
     AddObject(block3);
 
     auto *block4 = new Object;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("LightBlueBlock"));
-    Utility::CenterRect(&block4_sprite->rect, block4_sprite->surface, RenderSystem::background);
-    block4_sprite->rect.x += 32;
+    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    block4->x += 32;
     block4->AddComponent(block4_sprite);
     AddObject(block4);
 
@@ -84,29 +84,29 @@ Block *GameScene::CreateZBlock()
 {
     auto *block1 = new Object;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("RedBlock"));
-    Utility::CenterRect(&block1_sprite->rect, block1_sprite->surface, RenderSystem::background);
+    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
     block1->AddComponent(block1_sprite);
     AddObject(block1);
 
     auto *block2 = new Object;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("RedBlock"));
-    Utility::CenterRect(&block2_sprite->rect, block2_sprite->surface, RenderSystem::background);
-    block2_sprite->rect.y -= 32;
+    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    block2->y -= 32;
     block2->AddComponent(block2_sprite);
     AddObject(block2);
 
     auto *block3 = new Object;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("RedBlock"));
-    Utility::CenterRect(&block3_sprite->rect, block3_sprite->surface, RenderSystem::background);
-    block3_sprite->rect.x -= 32;
-    block3_sprite->rect.y -= 32;
+    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    block3->x -= 32;
+    block3->y -= 32;
     block3->AddComponent(block3_sprite);
     AddObject(block3);
 
     auto *block4 = new Object;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("RedBlock"));
-    Utility::CenterRect(&block4_sprite->rect, block4_sprite->surface, RenderSystem::background);
-    block4_sprite->rect.x += 32;
+    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    block4->x += 32;
     block4->AddComponent(block4_sprite);
     AddObject(block4);
 
@@ -117,29 +117,29 @@ Block *GameScene::CreateJBlock()
 {
     auto *block1 = new Object;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("BlueBlock"));
-    Utility::CenterRect(&block1_sprite->rect, block1_sprite->surface, RenderSystem::background);
+    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
     block1->AddComponent(block1_sprite);
     AddObject(block1);
 
     auto *block2 = new Object;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("BlueBlock"));
-    Utility::CenterRect(&block2_sprite->rect, block2_sprite->surface, RenderSystem::background);
-    block2_sprite->rect.x -= 32;
-    block2_sprite->rect.y -= 32;
+    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    block2->x -= 32;
+    block2->y -= 32;
     block2->AddComponent(block2_sprite);
     AddObject(block2);
 
     auto *block3 = new Object;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("BlueBlock"));
-    Utility::CenterRect(&block3_sprite->rect, block3_sprite->surface, RenderSystem::background);
-    block3_sprite->rect.x -= 32;
+    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    block3->x -= 32;
     block3->AddComponent(block3_sprite);
     AddObject(block3);
 
     auto *block4 = new Object;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("BlueBlock"));
-    Utility::CenterRect(&block4_sprite->rect, block4_sprite->surface, RenderSystem::background);
-    block4_sprite->rect.x += 32;
+    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    block4->x += 32;
     block4->AddComponent(block4_sprite);
     AddObject(block4);
 
@@ -150,29 +150,29 @@ Block *GameScene::CreateLBlock()
 {
     auto *block1 = new Object;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("OrangeBlock"));
-    Utility::CenterRect(&block1_sprite->rect, block1_sprite->surface, RenderSystem::background);
+    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
     block1->AddComponent(block1_sprite);
     AddObject(block1);
 
     auto *block2 = new Object;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("OrangeBlock"));
-    Utility::CenterRect(&block2_sprite->rect, block2_sprite->surface, RenderSystem::background);
-    block2_sprite->rect.x += 32;
-    block2_sprite->rect.y -= 32;
+    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    block2->x += 32;
+    block2->y -= 32;
     block2->AddComponent(block2_sprite);
     AddObject(block2);
 
     auto *block3 = new Object;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("OrangeBlock"));
-    Utility::CenterRect(&block3_sprite->rect, block3_sprite->surface, RenderSystem::background);
-    block3_sprite->rect.x -= 32;
+    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    block3->x -= 32;
     block3->AddComponent(block3_sprite);
     AddObject(block3);
 
     auto *block4 = new Object;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("OrangeBlock"));
-    Utility::CenterRect(&block4_sprite->rect, block4_sprite->surface, RenderSystem::background);
-    block4_sprite->rect.x += 32;
+    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    block4->x += 32;
     block4->AddComponent(block4_sprite);
     AddObject(block4);
 
@@ -183,29 +183,29 @@ Block *GameScene::CreateOBlock()
 {
     auto *block1 = new Object;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
-    Utility::CenterRect(&block1_sprite->rect, block1_sprite->surface, RenderSystem::background);
+    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
     block1->AddComponent(block1_sprite);
     AddObject(block1);
 
     auto *block2 = new Object;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
-    Utility::CenterRect(&block2_sprite->rect, block2_sprite->surface, RenderSystem::background);
-    block2_sprite->rect.y -= 32;
+    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    block2->y -= 32;
     block2->AddComponent(block2_sprite);
     AddObject(block2);
 
     auto *block3 = new Object;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
-    Utility::CenterRect(&block3_sprite->rect, block3_sprite->surface, RenderSystem::background);
-    block3_sprite->rect.x += 32;
-    block3_sprite->rect.y -= 32;
+    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    block3->x += 32;
+    block3->y -= 32;
     block3->AddComponent(block3_sprite);
     AddObject(block3);
 
     auto *block4 = new Object;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
-    Utility::CenterRect(&block4_sprite->rect, block4_sprite->surface, RenderSystem::background);
-    block4_sprite->rect.x += 32;
+    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    block4->x += 32;
     block4->AddComponent(block4_sprite);
     AddObject(block4);
 
@@ -216,29 +216,29 @@ Block *GameScene::CreateSBlock()
 {
     auto *block1 = new Object;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("GreenBlock"));
-    Utility::CenterRect(&block1_sprite->rect, block1_sprite->surface, RenderSystem::background);
+    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
     block1->AddComponent(block1_sprite);
     AddObject(block1);
 
     auto *block2 = new Object;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("GreenBlock"));
-    Utility::CenterRect(&block2_sprite->rect, block2_sprite->surface, RenderSystem::background);
-    block2_sprite->rect.x += 32;
-    block2_sprite->rect.y -= 32;
+    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    block2->x += 32;
+    block2->y -= 32;
     block2->AddComponent(block2_sprite);
     AddObject(block2);
 
     auto *block3 = new Object;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("GreenBlock"));
-    Utility::CenterRect(&block3_sprite->rect, block3_sprite->surface, RenderSystem::background);
-    block3_sprite->rect.x -= 32;
+    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    block3->x -= 32;
     block3->AddComponent(block3_sprite);
     AddObject(block3);
 
     auto *block4 = new Object;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("GreenBlock"));
-    Utility::CenterRect(&block4_sprite->rect, block4_sprite->surface, RenderSystem::background);
-    block4_sprite->rect.y -= 32;
+    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    block4->y -= 32;
     block4->AddComponent(block4_sprite);
     AddObject(block4);
 
@@ -249,28 +249,28 @@ Block *GameScene::CreateTBlock()
 {
     auto *block1 = new Object;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("PurpleBlock"));
-    Utility::CenterRect(&block1_sprite->rect, block1_sprite->surface, RenderSystem::background);
+    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
     block1->AddComponent(block1_sprite);
     AddObject(block1);
 
     auto *block2 = new Object;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("PurpleBlock"));
-    Utility::CenterRect(&block2_sprite->rect, block2_sprite->surface, RenderSystem::background);
-    block2_sprite->rect.y -= 32;
+    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    block2->y -= 32;
     block2->AddComponent(block2_sprite);
     AddObject(block2);
 
     auto *block3 = new Object;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("PurpleBlock"));
-    Utility::CenterRect(&block3_sprite->rect, block3_sprite->surface, RenderSystem::background);
-    block3_sprite->rect.x -= 32;
+    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    block3->x -= 32;
     block3->AddComponent(block3_sprite);
     AddObject(block3);
 
     auto *block4 = new Object;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("PurpleBlock"));
-    Utility::CenterRect(&block4_sprite->rect, block4_sprite->surface, RenderSystem::background);
-    block4_sprite->rect.x += 32;
+    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    block4->x += 32;
     block4->AddComponent(block4_sprite);
     AddObject(block4);
 
@@ -282,7 +282,7 @@ void GameScene::OnLoad()
     // Playing Area
     auto *area = new Object;
     auto *area_sprite = new SpriteComponent(ResourceManager::GetImagePath("PlayingArea"));
-    Utility::CenterRect(&area_sprite->rect, area_sprite->surface, RenderSystem::background);
+    Utility::CenterObject(area, RenderSystem::background, area_sprite->surface->w, area_sprite->surface->h);
     area->AddComponent(area_sprite);
     AddObject(area);
     
@@ -300,7 +300,7 @@ void GameScene::OnLoad()
     AddObject(menu_button);
 
     // Create block.
-    current_block = CreateOBlock();
+    current_block = CreateTBlock(); // @TODO: Spawn random block.
 }
 
 void GameScene::OnUnload()
@@ -314,12 +314,17 @@ void GameScene::Update(float elapsed)
 {
     // @TODO: Probably move these into constructor or OnLoad()?
     static const int drop_step = 1;
+    static const int min_y = 384;
     static float since_last_drop = 0;
-
+    
     since_last_drop += elapsed;
 
     if (since_last_drop >= drop_step) {
         current_block->Translate(0, 32);
         since_last_drop = 0;
+
+        if (current_block->block1->y == min_y) {
+            current_block = CreateOBlock(); // @TODO: Spawn random block.
+        }
     }
 }

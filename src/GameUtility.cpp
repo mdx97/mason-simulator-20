@@ -32,8 +32,8 @@ Object *GameUtility::CreateSoundControl()
     auto *sound = new Object;
 
     auto *sound_sprite = new SpriteComponent(!muted ? ResourceManager::GetImagePath("Sound") : ResourceManager::GetImagePath("Mute"));
-    sound_sprite->rect.x = 611;
-    sound_sprite->rect.y = 5;
+    sound->x = 611;
+    sound->y = 5;
 
     auto *sound_ui = new UIComponent;
     sound_ui->click = &ToggleSound;

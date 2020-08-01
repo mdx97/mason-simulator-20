@@ -9,8 +9,15 @@ void DrawObjects(const std::vector<Object *> &objects)
 {
     for (auto *object : objects) {
         SpriteComponent *sprite = object->GetComponent<SpriteComponent>();
-        if (sprite != nullptr)
-            SDL_BlitSurface(sprite->surface, nullptr, RenderSystem::background, &sprite->rect);
+        if (sprite != nullptr) {
+            // @TODO: Abstract this out into some function.
+            SDL_Rect rect;
+            rect.x = object->x + sprite->x;
+            rect.y = object->y + sprite->y;
+            rect.w = sprite->surface->w;
+            rect.h = sprite->surface->h;
+            SDL_BlitSurface(sprite->surface, nullptr, RenderSystem::background, &rect);
+        }
     }
 }
 

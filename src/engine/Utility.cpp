@@ -1,10 +1,9 @@
+#include "engine/Object.h"
 #include "engine/Utility.h"
 
 // Sets the given rect to be centered in the middle of the destination surface.
-void Utility::CenterRect(SDL_Rect *rect, SDL_Surface *source, SDL_Surface *dest)
+void Utility::CenterObject(Object *object, SDL_Surface *container, int width, int height)
 {
-    rect->x = (dest->w - source->w) / 2;
-    rect->y = (dest->h - source->h) / 2;
-    rect->w = source->w;
-    rect->h = source->h;
+    object->x = (container->w - width) / 2;
+    object->y = (container->h - height) / 2;
 }

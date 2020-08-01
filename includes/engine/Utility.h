@@ -4,7 +4,7 @@
 #include "SDL.h"
 
 namespace Utility {
-    void CenterRect(SDL_Rect *rect, SDL_Surface *source, SDL_Surface *dest);
+    void CenterObject(Object *object, SDL_Surface *container, int width, int height);
 };
 
 #endif

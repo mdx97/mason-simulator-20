@@ -8,7 +8,14 @@
 class Object
 {
 public:
-    Object() {}
+    int x, y;
+
+    Object()
+    {
+        x = 0;
+        y = 0;
+    }
+
     ~Object()
     {
         for (auto component : components)
