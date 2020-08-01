@@ -53,7 +53,7 @@ void MainMenuScene::OnLoad()
 
 void MainMenuScene::OnUnload()
 {
-    // todo: abstract this?
+    // @TODO: abstract this?
     for (auto object : objects)
         delete object;
 }

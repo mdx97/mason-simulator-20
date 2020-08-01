@@ -2,7 +2,7 @@
 #include "engine/SpriteComponent.h"
 #include "engine/UIComponent.h"
 
-void UIComponent::Update()
+void UIComponent::Update(float elapsed)
 {
     auto *sprite = object->GetComponent<SpriteComponent>();
     if (sprite != nullptr) {

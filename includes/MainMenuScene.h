@@ -8,6 +8,7 @@ class MainMenuScene : public Scene
 public:
     void OnLoad();
     void OnUnload();
+    void Update(float elapsed) { }
 };
 
 #endif

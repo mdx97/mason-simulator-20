@@ -6,7 +6,7 @@ class Object;
 class Component
 {
 public:
-    virtual void Update() = 0;
+    virtual void Update(float elapsed) = 0;
     Object *object = nullptr;
 };
 

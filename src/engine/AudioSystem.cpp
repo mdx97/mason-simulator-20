@@ -34,10 +34,10 @@ void AudioCallback(void *userdata, Uint8 *stream, int len)
 // Lazily called from AudioSystem::PlayClip()
 void Initialize()
 {
-    // todo: handle errors.
+    // @TODO: handle errors.
     const char *device = SDL_GetAudioDeviceName(0, 0);
 
-    // todo: pull this stuff out into constants.
+    // @TODO: pull this stuff out into constants.
     SDL_AudioSpec want, have;
     SDL_zero(want);
     want.freq = 44100;
@@ -46,7 +46,7 @@ void Initialize()
     want.samples = 4096;
     want.callback = &AudioCallback;
 
-    // todo: handle errors.
+    // @TODO: handle errors.
     device_id = SDL_OpenAudioDevice(device, 0, &want, &have, 0);
     SDL_PauseAudioDevice(device_id, 0);
 }

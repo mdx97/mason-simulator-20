@@ -7,7 +7,7 @@
 class UIComponent : public Component
 {
 public:
-    void Update();
+    void Update(float elapsed);
     SDL_Surface *hover_surface = nullptr;
     void (*click)(Object *);
 

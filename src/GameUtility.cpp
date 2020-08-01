@@ -6,7 +6,7 @@
 #include "Constants.h"
 #include "GameUtility.h"
 
-// todo: this may end up being some sort of global game state? depends on what other
+// @TODO: this may end up being some sort of global game state? depends on what other
 // parts of the application needs to access this value.
 bool muted = false;
 SDL_Surface *sound_surface = nullptr;
@@ -25,7 +25,7 @@ void ToggleSound(Object *object)
 }
 
 // Adds the sound control that is shared across both scenes.
-// todo: This function should be completely temporary as I plan on
+// @TODO: This function should be completely temporary as I plan on
 // adding a way to create objects that persist across scene changes.
 Object *GameUtility::CreateSoundControl()
 {

@@ -13,7 +13,7 @@ AudioClip::AudioClip(const std::string &filepath)
         buffer = nullptr;
         length = 0;
     }
-
+    
     Reset();
 }
 
