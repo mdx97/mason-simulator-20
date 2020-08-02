@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <iostream>
+#include <vector>
 #include "engine/CollisionComponent.h"
 #include "engine/Object.h"
 #include "engine/RenderSystem.h"
@@ -11,6 +13,9 @@
 #include "GameScene.h"
 #include "GameUtility.h"
 #include "MainMenuScene.h"
+
+const int DROP_RATE = 1;
+const int DROP_AMOUNT = 32;
 
 // @TODO: Should probably just get rid of this class and implement Objects that can compose other objects.
 class Block {
@@ -457,7 +462,7 @@ GameScene::GameScene()
 Block *GameScene::CreateRandomBlock()
 {
     Block *block = (this->*block_spawners[std::rand() % COUNT_BLOCK_SPAWNERS])();
-    block->Translate(0, -192);
+    block->Translate(0, -192); // @TODO: Find a better way to determine starting position.
     return block;
 }
 
@@ -483,8 +488,15 @@ void GameScene::OnLoad()
 
     AddObject(menu_button);
 
+    // Bottom Collider
+    auto *bottom = new Object;
+    auto *bottom_collision = new CollisionComponent(Constants::SCREEN_WIDTH, 1);
+    bottom->y = 416;
+    bottom->AddComponent(bottom_collision);
+    AddObject(bottom);
+
     // Create block.
-    current_block = CreateRandomBlock(); // @TODO: Spawn random block.
+    current_block = CreateRandomBlock();
 }
 
 void GameScene::OnUnload()
@@ -494,24 +506,47 @@ void GameScene::OnUnload()
         delete object;
 }
 
+// Dumb collision detection. Relies on a few assumptions, including that we will never try to move "past" another collider.
+// @TODO: Should probably generalize this a bit for the engine. But this works for Tetris. Also will need another solution for moving the block horizontally.
+bool CollidesBottom(Object *source, Object *other)
+{
+    auto *source_collision = source->GetComponent<CollisionComponent>();
+    auto *other_collision = other->GetComponent<CollisionComponent>();
+
+    if (source_collision == nullptr || other_collision == nullptr) {
+        return false;
+    }
+
+    auto source_left = source->x + source_collision->x;
+    auto source_right = source->x + source_collision->x + source_collision->w;
+    auto source_bottom = source->y + source_collision->y + source_collision->h;
+
+    auto other_left = other->x + other_collision->x;
+    auto other_right = other->x + other_collision->x + other_collision->w;
+    auto other_top = other->y + other_collision->y;
+
+    return (((source_left < other_right && source_left >= other_left) || (source_right > other_left && source_right <= other_right))) && source_bottom == other_top;
+}
+
 void GameScene::Update(float elapsed)
 {
-    // @TODO: Probably move these into constructor or OnLoad()?
-    static const int drop_step = 1;
-    static const int min_y = 384;
-    static const int drop = 32;
+    // @TODO: Probably move this into constructor or OnLoad()?
     static float since_last_drop = 0;
     
     since_last_drop += elapsed;
 
-    if (since_last_drop >= drop_step) {
+    if (since_last_drop >= DROP_RATE) {
         bool can_drop = true;
-        auto *current_block_collider = current_block->block1->GetComponent<CollisionComponent>();
+        
+        // @NOTE: When we implement block deletion, this will need to be updated so we aren't using dangling pointers.
+        std::vector<Object *> sub_blocks = {
+            current_block->block1, current_block->block2, current_block->block3, current_block->block4
+        };
 
-        for (auto *object : this->objects) {
-            auto *collision_component = object->GetComponent<CollisionComponent>();
-            if (collision_component != nullptr) {
-                if (current_block->block1->y + current_block_collider->y + current_block_collider->h == object->y + collision_component->y) {
+        for (auto *block : sub_blocks) {
+            for (auto *object : this->objects) {
+                if (std::find(sub_blocks.begin(), sub_blocks.end(), object) != sub_blocks.end()) continue;
+                if (CollidesBottom(block, object)) {
                     can_drop = false; 
                 }
             }
@@ -522,12 +557,7 @@ void GameScene::Update(float elapsed)
             return;
         }
 
-        current_block->Translate(0, drop);
+        current_block->Translate(0, DROP_AMOUNT);
         since_last_drop = 0;
-
-        // @TODO: Add collider instead.
-        if (current_block->block1->y == min_y) {
-            current_block = CreateRandomBlock(); // @TODO: Spawn random block.
-        }
     }
 }
