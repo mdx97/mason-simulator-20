@@ -27,6 +27,9 @@ private:
     Block *CreateSBlock();
     Block *CreateTBlock();
     Block *CreateRandomBlock();
+
+    void HandleBlockControl();
+    void HandleBlockGravity(float elapsed);
 };
 
 #endif

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "engine/CollisionComponent.h"
+#include "engine/EventSystem.h"
 #include "engine/Object.h"
 #include "engine/RenderSystem.h"
 #include "engine/ResourceManager.h"
@@ -16,6 +17,7 @@
 
 const int DROP_RATE = 1;
 const int DROP_AMOUNT = 32;
+const int SHIFT_AMOUNT = 32;
 
 // @TODO: Should probably just get rid of this class and implement Objects that can compose other objects.
 class Block {
@@ -528,8 +530,20 @@ bool CollidesBottom(Object *source, Object *other)
     return (((source_left < other_right && source_left >= other_left) || (source_right > other_left && source_right <= other_right))) && source_bottom == other_top;
 }
 
-void GameScene::Update(float elapsed)
+void GameScene::HandleBlockControl()
 {
+    if (EventSystem::keydown_a) {
+        current_block->Translate(-SHIFT_AMOUNT, 0);
+    }
+
+    if (EventSystem::keydown_d) {
+        current_block->Translate(SHIFT_AMOUNT, 0);
+    }
+}
+
+void GameScene::HandleBlockGravity(float elapsed)
+{
+    // Handle Block Dropping.
     // @TODO: Probably move this into constructor or OnLoad()?
     static float since_last_drop = 0;
     
@@ -560,4 +574,10 @@ void GameScene::Update(float elapsed)
         current_block->Translate(0, DROP_AMOUNT);
         since_last_drop = 0;
     }
+}
+
+void GameScene::Update(float elapsed)
+{
+    HandleBlockControl();
+    HandleBlockGravity(elapsed);
 }

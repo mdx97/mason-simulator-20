@@ -3,6 +3,8 @@
 
 namespace EventSystem {
     extern bool exit;
+    extern bool keydown_a;
+    extern bool keydown_d;
     void Process();
 };
 
