@@ -8,6 +8,13 @@
 // @TODO: When the block class is refactored, remove this forward declaration.
 class Block;
 
+typedef enum direction_e {
+    DIRECTION_LEFT,
+    DIRECTION_RIGHT,
+    DIRECTION_UP,
+    DIRECTION_DOWN
+} Direction;
+
 class GameScene : public Scene 
 {
 public:
@@ -30,7 +37,7 @@ private:
 
     void HandleBlockControl();
     void HandleBlockGravity(float elapsed);
-    bool CanDrop();
+    bool CanMoveDirection(Direction direction);
 };
 
 #endif

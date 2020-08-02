@@ -13,6 +13,7 @@ void EventSystem::Process()
     SDL_GetMouseState(&Mouse::position.x, &Mouse::position.y);
     Mouse::left_click = false;
 
+    // @PERFORMANCE: Maybe look into a better way to do this?
     for (int i = 0; i < SDL_NUM_SCANCODES; i++) {
         scancode_pressed_states[i] = false;
     }

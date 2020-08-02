@@ -510,7 +510,7 @@ void GameScene::OnUnload()
 
 // Dumb collision detection. Relies on a few assumptions, including that we will never try to move "past" another collider.
 // @TODO: Should probably generalize this a bit for the engine. But this works for Tetris. Also will need another solution for moving the block horizontally.
-bool CollidesBottom(Object *source, Object *other)
+bool CollidesDown(Object *source, Object *other)
 {
     auto *source_collision = source->GetComponent<CollisionComponent>();
     auto *other_collision = other->GetComponent<CollisionComponent>();
@@ -527,24 +527,70 @@ bool CollidesBottom(Object *source, Object *other)
     auto other_right = other->x + other_collision->x + other_collision->w;
     auto other_top = other->y + other_collision->y;
 
-    return (((source_left < other_right && source_left >= other_left) || (source_right > other_left && source_right <= other_right))) && source_bottom == other_top;
+    return ((source_left < other_right && source_left >= other_left) || (source_right > other_left && source_right <= other_right)) && source_bottom == other_top;
 }
 
-void GameScene::HandleBlockControl()
+bool CollidesLeft(Object *source, Object *other)
 {
-    if (EventSystem::IsKeyDown(SDL_SCANCODE_A)) {
-        current_block->Translate(-SHIFT_AMOUNT, 0);
+    auto *source_collision = source->GetComponent<CollisionComponent>();
+    auto *other_collision = other->GetComponent<CollisionComponent>();
+
+    if (source_collision == nullptr || other_collision == nullptr) {
+        return false;
     }
 
-    if (EventSystem::IsKeyDown(SDL_SCANCODE_D)) {
-        current_block->Translate(SHIFT_AMOUNT, 0);
-    }
+    auto source_top = source->y + source_collision->y;
+    auto source_bottom = source->y + source_collision->y + source_collision->h;
+    auto source_left = source->x + source_collision->x;
+
+    auto other_top = other->y + other_collision->y;
+    auto other_bottom = other->y + other_collision->y + other_collision->h;
+    auto other_right = other->x + other_collision->x + other_collision->w;
+
+    return ((source_top < other_bottom && source_top >= other_top) || (source_bottom < other_top && source_bottom >= other_bottom)) && source_left == other_right;
 }
 
-bool GameScene::CanDrop()
+bool CollidesRight(Object *source, Object *other)
 {
-    bool can_drop = true;
-        
+    auto *source_collision = source->GetComponent<CollisionComponent>();
+    auto *other_collision = other->GetComponent<CollisionComponent>();
+
+    if (source_collision == nullptr || other_collision == nullptr) {
+        return false;
+    }
+
+    auto source_top = source->y + source_collision->y;
+    auto source_bottom = source->y + source_collision->y + source_collision->h;
+    auto source_right = source->x + source_collision->x + source_collision->w;
+
+    auto other_top = other->y + other_collision->y;
+    auto other_bottom = other->y + other_collision->y + other_collision->h;
+    auto other_left = other->x + other_collision->x;
+
+    return ((source_top < other_bottom && source_top >= other_top) || (source_bottom < other_top && source_bottom >= other_bottom)) && source_right == other_left;
+}
+
+bool GameScene::CanMoveDirection(Direction direction)
+{
+    bool can_move = true;
+    bool (*function)(Object*, Object*) = nullptr;
+
+    switch (direction) {
+        case DIRECTION_LEFT:
+            function = &CollidesLeft;
+            break;
+        case DIRECTION_RIGHT:
+            function = &CollidesRight;
+            break;
+        case DIRECTION_DOWN:
+            function = &CollidesDown;
+            break;
+    }
+
+    if (function == nullptr) {
+        return false;
+    }
+
     // @NOTE: When we implement block deletion, this will need to be updated so we aren't using dangling pointers.
     std::vector<Object *> sub_blocks = {
         current_block->block1, current_block->block2, current_block->block3, current_block->block4
@@ -553,13 +599,24 @@ bool GameScene::CanDrop()
     for (auto *block : sub_blocks) {
         for (auto *object : this->objects) {
             if (std::find(sub_blocks.begin(), sub_blocks.end(), object) != sub_blocks.end()) continue;
-            if (CollidesBottom(block, object)) {
-                can_drop = false; 
+            if (function(block, object)) {
+                can_move = false; 
             }
         }
     }
 
-    return can_drop;
+    return can_move;
+}
+
+void GameScene::HandleBlockControl()
+{
+    if (EventSystem::IsKeyDown(SDL_SCANCODE_A) && CanMoveDirection(DIRECTION_LEFT)) {
+        current_block->Translate(-SHIFT_AMOUNT, 0);
+    }
+
+    if (EventSystem::IsKeyDown(SDL_SCANCODE_D) && CanMoveDirection(DIRECTION_RIGHT)) {
+        current_block->Translate(SHIFT_AMOUNT, 0);
+    }
 }
 
 void GameScene::HandleBlockGravity(float elapsed)
@@ -570,7 +627,7 @@ void GameScene::HandleBlockGravity(float elapsed)
     since_last_drop += elapsed;
 
     if (since_last_drop >= DROP_RATE) {
-        if (!CanDrop()) {
+        if (!CanMoveDirection(DIRECTION_DOWN)) {
             current_block = CreateRandomBlock();
             return;
         }
@@ -578,7 +635,7 @@ void GameScene::HandleBlockGravity(float elapsed)
         since_last_drop = 0;
 
     } else if (EventSystem::IsKeyDown(SDL_SCANCODE_S)) {
-        while (CanDrop()) {
+        while (CanMoveDirection(DIRECTION_DOWN)) {
             current_block->Translate(0, DROP_AMOUNT);
         }
         current_block = CreateRandomBlock();
