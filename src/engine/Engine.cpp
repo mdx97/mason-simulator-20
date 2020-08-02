@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include "engine/Engine.h"
 #include "engine/EventSystem.h"
@@ -23,6 +25,7 @@ void Engine::Start(const std::string &title, int width, int height)
     }
 
     RenderSystem::background = SDL_GetWindowSurface(window);
+    std::srand(std::time(nullptr));
 }
 
 // Runs the main game loop until the user exits the program.
