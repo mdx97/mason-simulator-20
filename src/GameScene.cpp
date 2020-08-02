@@ -532,11 +532,11 @@ bool CollidesBottom(Object *source, Object *other)
 
 void GameScene::HandleBlockControl()
 {
-    if (EventSystem::keydown_a) {
+    if (EventSystem::IsKeyDown(SDL_SCANCODE_A)) {
         current_block->Translate(-SHIFT_AMOUNT, 0);
     }
 
-    if (EventSystem::keydown_d) {
+    if (EventSystem::IsKeyDown(SDL_SCANCODE_D)) {
         current_block->Translate(SHIFT_AMOUNT, 0);
     }
 }
@@ -577,7 +577,7 @@ void GameScene::HandleBlockGravity(float elapsed)
         current_block->Translate(0, DROP_AMOUNT);
         since_last_drop = 0;
 
-    } else if (EventSystem::keydown_s) {
+    } else if (EventSystem::IsKeyDown(SDL_SCANCODE_S)) {
         while (CanDrop()) {
             current_block->Translate(0, DROP_AMOUNT);
         }

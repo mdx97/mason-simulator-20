@@ -1,12 +1,12 @@
 #ifndef EVENTSYSTEM_H
 #define EVENTSYSTEM_H
 
+#include "SDL.h"
+
 namespace EventSystem {
     extern bool exit;
-    extern bool keydown_a;
-    extern bool keydown_d;
-    extern bool keydown_s;
     void Process();
+    bool IsKeyDown(SDL_Scancode scancode);
 };
 
 #endif
