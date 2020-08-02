@@ -1,12 +1,19 @@
 MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 PROJECT_DIR := $(dir $(MAKEFILE_PATH))
-SOURCE_FILES = src/engine/AudioClip.cpp src/engine/AudioSystem.cpp src/engine/Engine.cpp src/engine/EventSystem.cpp src/GameScene.cpp src/GameUtility.cpp src/engine/Logger.cpp src/MainMenuScene.cpp src/engine/Mouse.cpp src/engine/RenderSystem.cpp src/engine/ResourceManager.cpp src/engine/Scene.cpp src/engine/SceneSystem.cpp src/engine/SpriteComponent.cpp src/engine/Utility.cpp src/engine/UIComponent.cpp
+CPP_FILES := $(shell find src/ -type f -name '*.cpp')
+CPP_FILENAMES := $(patsubst src/%.cpp,%,$(CPP_FILES))
 
-game: $(SOURCE_FILES)
-	g++ src/Main.cpp $(SOURCE_FILES) -I /d/MinGW_Dev/include/SDL2 -L /d/MinGW_Dev/lib -I $(PROJECT_DIR)includes -w -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2 -o dist/ms20 -g -std=c++17 -O0
+define COMPILE_CPP
 
-run: game
+build/$(1).o : src/$(1).cpp
+	@g++ -c src/$(1).cpp -I $(PROJECT_DIR)includes -I /d/MinGW_Dev/include/SDL2 -o build/$(1).o -O0 -std=c++17 
+
+endef
+
+$(foreach file, $(CPP_FILENAMES), $(eval $(call COMPILE_CPP,$(file))))
+
+dist/ms20: $(foreach file, $(CPP_FILENAMES), build/$(file).o)
+	@g++ $(foreach file, $(CPP_FILENAMES), build/$(file).o) -L /d/MinGW_Dev/lib -w -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2 -o dist/ms20
+
+run: dist/ms20
 	./dist/ms20.exe
-
-test: 
-	g++ test.cpp $(SOURCE_FILES) -I /d/MinGW_Dev/include/SDL2 -L /d/MinGW_Dev/lib -I $(PROJECT_DIR)includes -w -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2 -o dist/test -g -std=c++17
