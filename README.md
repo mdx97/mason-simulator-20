@@ -27,6 +27,5 @@ make run
 
 This is currently not in a playable state, there are still some crucial gameplay pieces that are missing...
 - Scoring
-- Playing Area Side Boundary Collision
 - Block Rotation
 - etc

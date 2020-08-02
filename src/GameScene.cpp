@@ -679,6 +679,7 @@ void GameScene::Update(float elapsed)
     HandleBlockGravity(elapsed);
 
     for (auto *object : objects) {
+        // @TODO: Better way to determine top of playing area.
         if (object->type == "Block" && !current_block->HasBlock(object) && object->y <= 32) {
             auto *scene = new MainMenuScene;
             SceneSystem::Load(scene);
