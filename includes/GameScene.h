@@ -30,6 +30,7 @@ private:
 
     void HandleBlockControl();
     void HandleBlockGravity(float elapsed);
+    bool CanDrop();
 };
 
 #endif

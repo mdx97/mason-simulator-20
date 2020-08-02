@@ -541,37 +541,47 @@ void GameScene::HandleBlockControl()
     }
 }
 
+bool GameScene::CanDrop()
+{
+    bool can_drop = true;
+        
+    // @NOTE: When we implement block deletion, this will need to be updated so we aren't using dangling pointers.
+    std::vector<Object *> sub_blocks = {
+        current_block->block1, current_block->block2, current_block->block3, current_block->block4
+    };
+
+    for (auto *block : sub_blocks) {
+        for (auto *object : this->objects) {
+            if (std::find(sub_blocks.begin(), sub_blocks.end(), object) != sub_blocks.end()) continue;
+            if (CollidesBottom(block, object)) {
+                can_drop = false; 
+            }
+        }
+    }
+
+    return can_drop;
+}
+
 void GameScene::HandleBlockGravity(float elapsed)
 {
-    // Handle Block Dropping.
     // @TODO: Probably move this into constructor or OnLoad()?
     static float since_last_drop = 0;
     
     since_last_drop += elapsed;
 
     if (since_last_drop >= DROP_RATE) {
-        bool can_drop = true;
-        
-        // @NOTE: When we implement block deletion, this will need to be updated so we aren't using dangling pointers.
-        std::vector<Object *> sub_blocks = {
-            current_block->block1, current_block->block2, current_block->block3, current_block->block4
-        };
-
-        for (auto *block : sub_blocks) {
-            for (auto *object : this->objects) {
-                if (std::find(sub_blocks.begin(), sub_blocks.end(), object) != sub_blocks.end()) continue;
-                if (CollidesBottom(block, object)) {
-                    can_drop = false; 
-                }
-            }
-        }
-
-        if (!can_drop) {
+        if (!CanDrop()) {
             current_block = CreateRandomBlock();
             return;
         }
-
         current_block->Translate(0, DROP_AMOUNT);
+        since_last_drop = 0;
+
+    } else if (EventSystem::keydown_s) {
+        while (CanDrop()) {
+            current_block->Translate(0, DROP_AMOUNT);
+        }
+        current_block = CreateRandomBlock();
         since_last_drop = 0;
     }
 }
