@@ -1,6 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include <string>
 #include <vector>
 #include "Component.h"
 #include "SDL.h"
@@ -9,11 +10,13 @@ class Object
 {
 public:
     int x, y;
+    const char *type;
 
     Object()
     {
         x = 0;
         y = 0;
+        type = "";
     }
 
     ~Object()

@@ -30,6 +30,11 @@ public:
         this->block2 = block2;
         this->block3 = block3;
         this->block4 = block4;
+
+        block1->type = "Block";
+        block2->type = "Block";
+        block3->type = "Block";
+        block4->type = "Block";
     }
 
     void Translate(int x, int y)
@@ -43,6 +48,15 @@ public:
         block2->y += y;
         block3->y += y;
         block4->y += y;
+    }
+
+    bool HasBlock(Object *object)
+    {
+        if (object == nullptr) {
+            return false;
+        }
+
+        return object == block1 || object == block2 || object == block3 || object == block4;
     }
 };
 
@@ -663,4 +677,11 @@ void GameScene::Update(float elapsed)
 {
     HandleBlockControl();
     HandleBlockGravity(elapsed);
+
+    for (auto *object : objects) {
+        if (object->type == "Block" && !current_block->HasBlock(object) && object->y <= 32) {
+            auto *scene = new MainMenuScene;
+            SceneSystem::Load(scene);
+        }
+    }
 }
