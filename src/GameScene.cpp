@@ -497,6 +497,22 @@ void GameScene::OnLoad()
     bottom->AddComponent(bottom_collision);
     AddObject(bottom);
 
+    // Left Collider
+    auto *left = new Object;
+    auto *left_collision = new CollisionComponent(1, Constants::SCREEN_HEIGHT);
+    Utility::CenterObject(left, RenderSystem::background, 1, Constants::SCREEN_HEIGHT);
+    left->x = 207;
+    left->AddComponent(left_collision);
+    AddObject(left);
+
+    // Right Collider
+    auto *right = new Object;
+    auto *right_collision = new CollisionComponent(1, Constants::SCREEN_HEIGHT);
+    Utility::CenterObject(right, RenderSystem::background, 1, Constants::SCREEN_HEIGHT);
+    right->x = 432;
+    right->AddComponent(right_collision);
+    AddObject(right);
+
     // Create block.
     current_block = CreateRandomBlock();
 }
