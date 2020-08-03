@@ -23,9 +23,10 @@ If you get everything set up properly, you should just be able to run the follow
 make run
 ```
 
-## Status
+## Controls
 
-This is currently not in a playable state, there are still some crucial gameplay pieces that are missing...
-- Scoring
-- Block Rotation
-- etc
+A - Move block left
+D - Move block right
+Q - Rotate block left
+E - Rotate block right
+S - Snap block into place

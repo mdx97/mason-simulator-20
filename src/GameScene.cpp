@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <cstring>
 #include <vector>
 #include "engine/CollisionComponent.h"
 #include "engine/EventSystem.h"
@@ -705,6 +706,53 @@ void GameScene::HandleBlockGravity(float elapsed)
     }
 }
 
+// @TODO: Clean this code up. Also, there may be an issue with blocks needing to fall more than the number of levels that were deleted? Not sure how this works in
+// real tetris. Should research.
+void GameScene::HandleScoring()
+{
+    static const int ROWS = 11;
+    static const int COLS = 7;
+    static const int MAX_Y = 384;
+    static const int MIN_X = 208;
+
+    Object *fill_table[ROWS][COLS] = { nullptr };
+
+    for (auto *object : objects) {
+        if (object && object->type == "Block" && !current_block->HasBlock(object)) {
+            fill_table[ROWS - ((MAX_Y - object->y) / 32) - 1][(object->x - MIN_X) / 32] = object;
+        }
+    }
+
+    int rows_deleted = 0;
+    int min_delted_row_lvl = ROWS;
+
+    for (int i = 0; i < ROWS; i++) {
+        bool row_filled = true;
+        for (int j = 0; j < COLS; j++) {
+            if (fill_table[i][j] == nullptr) {
+                row_filled = false;
+            }
+        }
+
+        if (row_filled) {
+            rows_deleted++;
+            min_delted_row_lvl = std::min(min_delted_row_lvl, ROWS - i - 1);
+            for (int j = 0; j < COLS; j++) {
+                delete fill_table[i][j];
+                RemoveObject(fill_table[i][j]);
+            }
+        }
+    }
+
+    if (rows_deleted > 0) {
+        for (auto *object : objects) {
+            if (object && object->type == "Block" && !current_block->HasBlock(object) && MAX_Y - object->y > min_delted_row_lvl * 32) {
+                object->y += 32 * rows_deleted;
+            }
+        }
+    }
+}
+
 void GameScene::Update(float elapsed)
 {
     HandleBlockControl();
@@ -717,4 +765,6 @@ void GameScene::Update(float elapsed)
             SceneSystem::Load(scene);
         }
     }
+
+    HandleScoring();
 }

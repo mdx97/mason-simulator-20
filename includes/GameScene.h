@@ -37,6 +37,7 @@ private:
 
     void HandleBlockControl();
     void HandleBlockGravity(float elapsed);
+    void HandleScoring();
     bool CanMoveDirection(Direction direction);
 };
 

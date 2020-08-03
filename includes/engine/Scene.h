@@ -11,6 +11,7 @@ public:
     virtual void Update(float elapsed) = 0;
     std::vector<Object *> objects;
     void AddObject(Object *object);
+    void RemoveObject(Object *object);
 };
 
 #endif
