@@ -1,4 +1,4 @@
-#include "engine/Object.h"
+#include "engine/Entity.h"
 #include "engine/RenderSystem.h"
 #include "engine/ResourceManager.h"
 #include "engine/SceneSystem.h"
@@ -10,7 +10,7 @@
 #include "GameUtility.h"
 #include "MainMenuScene.h"
 
-void PlayButtonClickHandler(Object *object)
+void PlayButtonClickHandler(Entity *entity)
 {
     auto *game = new GameScene;
     SceneSystem::Load(game);
@@ -19,18 +19,18 @@ void PlayButtonClickHandler(Object *object)
 void MainMenuScene::OnLoad()
 {
     // Logo
-    auto *logo = new Object;
+    auto *logo = new Entity;
     auto *logo_sprite = new SpriteComponent(ResourceManager::GetImagePath("Logo"));
-    Utility::CenterObject(logo, RenderSystem::background, logo_sprite->surface->w, logo_sprite->surface->h);
+    Utility::CenterEntity(logo, RenderSystem::background, logo_sprite->surface->w, logo_sprite->surface->h);
     logo->y = 20;
     logo->AddComponent(logo_sprite);
-    AddObject(logo);
+    AddEntity(logo);
 
     // Play Button
-    auto *play = new Object;
+    auto *play = new Entity;
 
     auto *play_sprite = new SpriteComponent(ResourceManager::GetImagePath("PlayButton"));
-    Utility::CenterObject(play, RenderSystem::background, play_sprite->surface->w, play_sprite->surface->h);
+    Utility::CenterEntity(play, RenderSystem::background, play_sprite->surface->w, play_sprite->surface->h);
     play->y = 300;
 
     auto *play_ui = new UIComponent;
@@ -40,21 +40,21 @@ void MainMenuScene::OnLoad()
     play->AddComponent(play_ui);
     play->AddComponent(play_sprite);
 
-    AddObject(play);
+    AddEntity(play);
 
     // Trademark
-    auto *trademark = new Object;
+    auto *trademark = new Entity;
     auto *trademark_sprite = new SpriteComponent(ResourceManager::GetImagePath("Trademark"));
-    Utility::CenterObject(trademark, RenderSystem::background, trademark_sprite->surface->w, trademark_sprite->surface->h);
+    Utility::CenterEntity(trademark, RenderSystem::background, trademark_sprite->surface->w, trademark_sprite->surface->h);
     trademark->y = 465;
     trademark->AddComponent(trademark_sprite);
-    AddObject(trademark);
+    AddEntity(trademark);
 }
 
 void MainMenuScene::OnUnload()
 {
     // @TODO: abstract this?
-    for (auto object : objects) {
-        delete object;
+    for (auto entity : entities) {
+        delete entity;
     }
 }

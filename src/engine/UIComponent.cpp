@@ -4,12 +4,12 @@
 
 void UIComponent::Update(float elapsed)
 {
-    auto *sprite = object->GetComponent<SpriteComponent>();
+    auto *sprite = entity->GetComponent<SpriteComponent>();
     
     if (sprite != nullptr) {
         SDL_Rect rect = { 
-            object->x + sprite->x,
-            object->y + sprite->y,
+            entity->x + sprite->x,
+            entity->y + sprite->y,
             sprite->surface->w, 
             sprite->surface->h 
         };
@@ -27,7 +27,7 @@ void UIComponent::Update(float elapsed)
 void UIComponent::HandleClick()
 {
     if (Mouse::left_click && click != nullptr) {
-        click(object);
+        click(entity);
     }
 }
 

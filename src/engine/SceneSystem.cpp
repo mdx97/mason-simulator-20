@@ -1,10 +1,10 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
-#include "engine/Object.h"
+#include "engine/Entity.h"
 #include "engine/SceneSystem.h"
 
-std::vector<Object *> SceneSystem::persistent_objects;
+std::vector<Entity *> SceneSystem::persistent_entities;
 
 Scene *SceneSystem::current = nullptr;
 Scene *next = nullptr;
@@ -17,7 +17,7 @@ void SceneSystem::Load(Scene *scene)
     next = scene;
 }
 
-// Updates every object in the current scene.
+// Updates every entity in the current scene.
 void SceneSystem::Tick()
 {
     if (next != nullptr) {
@@ -39,21 +39,21 @@ void SceneSystem::Tick()
 
     current->Update(elapsed);
 
-    for (auto *object : current->objects) {
-        for (auto *component : object->components) {
+    for (auto *entity : current->entities) {
+        for (auto *component : entity->components) {
             component->Update(elapsed);
         }
     }
 
-    for (auto *object : persistent_objects) {
-        for (auto *component : object->components) {
+    for (auto *entity : persistent_entities) {
+        for (auto *component : entity->components) {
             component->Update(elapsed);
         }
     }
 }
 
-// Adds an object that will stay present across scenes.
-void SceneSystem::AddPersistentObject(Object *object)
+// Adds an entity that will stay present across scenes.
+void SceneSystem::AddPersistentEntity(Entity *entity)
 {
-    persistent_objects.push_back(object);
+    persistent_entities.push_back(entity);
 }

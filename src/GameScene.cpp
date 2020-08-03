@@ -4,7 +4,6 @@
 #include <vector>
 #include "engine/CollisionComponent.h"
 #include "engine/EventSystem.h"
-#include "engine/Object.h"
 #include "engine/RenderSystem.h"
 #include "engine/ResourceManager.h"
 #include "engine/SceneSystem.h"
@@ -20,479 +19,478 @@ const int DROP_RATE = 1;
 const int DROP_AMOUNT = 32;
 const int SHIFT_AMOUNT = 32;
 
-// @TODO: Should probably just get rid of this class and implement Objects that can compose other objects.
-class Block {
-public:
-    Object *block1, *block2, *block3, *block4;
+void BlockTranslate(Composite *composite, int x, int y)
+{
+    for (auto *entity : composite->entities) {
+        entity->x += x;
+        entity->y += y;
+    }
+}
 
-    Block(Object *block1, Object *block2, Object *block3, Object *block4)
-    {
-        this->block1 = block1;
-        this->block2 = block2;
-        this->block3 = block3;
-        this->block4 = block4;
+void BlockRotateLeft(Composite *composite)
+{
+    auto *block1 = composite->entities[0];
 
-        block1->type = "Block";
-        block2->type = "Block";
-        block3->type = "Block";
-        block4->type = "Block";
+    for (int i = 1; i < composite->entities.size(); i++) {
+        auto *block = composite->entities[i];
+
+        int offset_x = block->x - block1->x;
+        int offset_y = block->y - block1->y;
+
+        block->x = block1->x + offset_y;
+        block->y = block1->y + (offset_x * -1);
+    }
+}
+
+void BlockRotateRight(Composite *composite)
+{
+    auto *block1 = composite->entities[0];
+    
+    for (int i = 1; i < composite->entities.size(); i++) {
+        auto *block = composite->entities[i];
+
+        int offset_x = block->x - block1->x;
+        int offset_y = block->y - block1->y;
+
+        block->x = block1->x - offset_y;
+        block->y = block1->y - (offset_x * -1);
+    }
+}
+
+bool HasBlock(Composite *composite, Entity *entity)
+{
+    if (entity == nullptr) {
+        return false;
     }
 
-    void Translate(int x, int y)
-    {
-        block1->x += x;
-        block2->x += x;
-        block3->x += x;
-        block4->x += x;
+    return std::find(composite->entities.begin(), composite->entities.end(), entity) != composite->entities.end();
+}
 
-        block1->y += y;
-        block2->y += y;
-        block3->y += y;
-        block4->y += y;
-    }
-
-    void RotateLeft()
-    {
-        std::vector<Object *> sub_blocks = { block2, block3, block4 };
-
-        for (auto *block : sub_blocks) {
-            int offset_x = block->x - block1->x;
-            int offset_y = block->y - block1->y;
-            block->x = block1->x + offset_y;
-            block->y = block1->y + (offset_x * -1);
-        }
-    }
-
-    void RotateRight()
-    {
-        std::vector<Object *> sub_blocks = { block2, block3, block4 };
-
-        for (auto *block : sub_blocks) {
-            int offset_x = block->x - block1->x;
-            int offset_y = block->y - block1->y;
-            block->x = block1->x - offset_y;
-            block->y = block1->y - (offset_x * -1);
-        }
-    }
-
-    bool HasBlock(Object *object)
-    {
-        if (object == nullptr) {
-            return false;
-        }
-
-        return object == block1 || object == block2 || object == block3 || object == block4;
-    }
-};
-
-void MenuButtonClick(Object *object)
+void MenuButtonClick(Entity *entity)
 {
     auto *scene = new MainMenuScene;
     SceneSystem::Load(scene);
 }
 
+Composite *CreateBlockComposite(Entity *block1, Entity *block2, Entity *block3, Entity *block4)
+{
+    auto *composite = new Composite;
+
+    composite->AddEntity(block1);
+    composite->AddEntity(block2);
+    composite->AddEntity(block3);
+    composite->AddEntity(block4);
+
+    block1->type = "Block";
+    block2->type = "Block";
+    block3->type = "Block";
+    block4->type = "Block";
+
+    return composite;
+}
+
 // @TODO: Should refactor these functions out of this file, it kinda clutters it up.
-Block *GameScene::CreateIBlock()
+Composite *GameScene::CreateIBlock()
 {
     // First block.
-    auto *block1 = new Object;
+    auto *block1 = new Entity;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("LightBlueBlock"));
     auto *block1_collision = new CollisionComponent(block1_sprite->surface->w, block1_sprite->surface->h);
 
-    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
+    Utility::CenterEntity(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
 
     block1->AddComponent(block1_sprite);
     block1->AddComponent(block1_collision);
 
-    AddObject(block1);
+    AddEntity(block1);
 
     // Second block.
-    auto *block2 = new Object;
+    auto *block2 = new Entity;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("LightBlueBlock"));
     auto *block2_collision = new CollisionComponent(block2_sprite->surface->w, block2_sprite->surface->h);
 
-    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    Utility::CenterEntity(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
     block2->x -= 32;
 
     block2->AddComponent(block2_sprite);
     block2->AddComponent(block2_collision);
     
-    AddObject(block2);
+    AddEntity(block2);
 
     // Third block.
-    auto *block3 = new Object;
+    auto *block3 = new Entity;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("LightBlueBlock"));
     auto *block3_collision = new CollisionComponent(block3_sprite->surface->w, block3_sprite->surface->h);
 
-    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    Utility::CenterEntity(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
     block3->x -= 64;
 
     block3->AddComponent(block3_sprite);
     block3->AddComponent(block3_collision);
     
-    AddObject(block3);
+    AddEntity(block3);
 
     // Fourth block.
-    auto *block4 = new Object;
+    auto *block4 = new Entity;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("LightBlueBlock"));
     auto *block4_collision = new CollisionComponent(block4_sprite->surface->w, block4_sprite->surface->h);
 
-    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    Utility::CenterEntity(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
     block4->x += 32;
 
     block4->AddComponent(block4_sprite);
     block4->AddComponent(block4_collision);
     
-    AddObject(block4);
+    AddEntity(block4);
 
-    return new Block(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4);
 }
 
-Block *GameScene::CreateZBlock()
+Composite *GameScene::CreateZBlock()
 {
     // First block.
-    auto *block1 = new Object;
+    auto *block1 = new Entity;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("RedBlock"));
     auto *block1_collision = new CollisionComponent(block1_sprite->surface->w, block1_sprite->surface->h);
 
-    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
+    Utility::CenterEntity(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
 
     block1->AddComponent(block1_sprite);
     block1->AddComponent(block1_collision);
 
-    AddObject(block1);
+    AddEntity(block1);
 
     // Second block.
-    auto *block2 = new Object;
+    auto *block2 = new Entity;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("RedBlock"));
     auto *block2_collision = new CollisionComponent(block2_sprite->surface->w, block2_sprite->surface->h);
 
-    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    Utility::CenterEntity(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
     block2->y -= 32;
 
     block2->AddComponent(block2_sprite);
     block2->AddComponent(block2_collision);
 
-    AddObject(block2);
+    AddEntity(block2);
 
     // Third block.
-    auto *block3 = new Object;
+    auto *block3 = new Entity;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("RedBlock"));
     auto *block3_collision = new CollisionComponent(block3_sprite->surface->w, block3_sprite->surface->h);
 
-    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    Utility::CenterEntity(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
     block3->x -= 32;
     block3->y -= 32;
 
     block3->AddComponent(block3_sprite);
     block3->AddComponent(block3_collision);
 
-    AddObject(block3);
+    AddEntity(block3);
 
     // Fourth block.
-    auto *block4 = new Object;
+    auto *block4 = new Entity;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("RedBlock"));
     auto *block4_collision = new CollisionComponent(block4_sprite->surface->w, block4_sprite->surface->h);
 
-    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    Utility::CenterEntity(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
     block4->x += 32;
 
     block4->AddComponent(block4_sprite);
     block4->AddComponent(block4_collision);
 
-    AddObject(block4);
+    AddEntity(block4);
 
-    return new Block(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4);
 }
 
-Block *GameScene::CreateJBlock()
+Composite *GameScene::CreateJBlock()
 {
     // First block.
-    auto *block1 = new Object;
+    auto *block1 = new Entity;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("BlueBlock"));
     auto *block1_collision = new CollisionComponent(block1_sprite->surface->w, block1_sprite->surface->h);
 
-    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
+    Utility::CenterEntity(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
 
     block1->AddComponent(block1_sprite);
     block1->AddComponent(block1_collision);
     
-    AddObject(block1);
+    AddEntity(block1);
 
     // Second block.
-    auto *block2 = new Object;
+    auto *block2 = new Entity;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("BlueBlock"));
     auto *block2_collision = new CollisionComponent(block2_sprite->surface->w, block2_sprite->surface->h);
 
-    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    Utility::CenterEntity(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
     block2->x -= 32;
     block2->y -= 32;
 
     block2->AddComponent(block2_sprite);
     block2->AddComponent(block2_collision);
 
-    AddObject(block2);
+    AddEntity(block2);
 
     // Third block.
-    auto *block3 = new Object;
+    auto *block3 = new Entity;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("BlueBlock"));
     auto *block3_collision = new CollisionComponent(block3_sprite->surface->w, block3_sprite->surface->h);
 
-    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    Utility::CenterEntity(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
     block3->x -= 32;
 
     block3->AddComponent(block3_sprite);
     block3->AddComponent(block3_collision);
 
-    AddObject(block3);
+    AddEntity(block3);
 
     // Fourth block.
-    auto *block4 = new Object;
+    auto *block4 = new Entity;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("BlueBlock"));
     auto *block4_collision = new CollisionComponent(block4_sprite->surface->w, block4_sprite->surface->h);
 
-    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    Utility::CenterEntity(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
     block4->x += 32;
 
     block4->AddComponent(block4_sprite);
     block4->AddComponent(block4_collision);
 
-    AddObject(block4);
+    AddEntity(block4);
 
-    return new Block(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4);
 }
 
-Block *GameScene::CreateLBlock()
+Composite *GameScene::CreateLBlock()
 {
     // First block.
-    auto *block1 = new Object;
+    auto *block1 = new Entity;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("OrangeBlock"));
     auto *block1_collision = new CollisionComponent(block1_sprite->surface->w, block1_sprite->surface->h);
 
-    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
+    Utility::CenterEntity(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
 
     block1->AddComponent(block1_sprite);
     block1->AddComponent(block1_collision);
 
-    AddObject(block1);
+    AddEntity(block1);
 
     // Second block.
-    auto *block2 = new Object;
+    auto *block2 = new Entity;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("OrangeBlock"));
     auto *block2_collision = new CollisionComponent(block2_sprite->surface->w, block2_sprite->surface->h);
 
-    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    Utility::CenterEntity(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
     block2->x += 32;
     block2->y -= 32;
 
     block2->AddComponent(block2_sprite);
     block2->AddComponent(block2_collision);
 
-    AddObject(block2);
+    AddEntity(block2);
 
     // Third block.
-    auto *block3 = new Object;
+    auto *block3 = new Entity;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("OrangeBlock"));
     auto *block3_collision = new CollisionComponent(block3_sprite->surface->w, block3_sprite->surface->h);
 
-    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    Utility::CenterEntity(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
     block3->x -= 32;
 
     block3->AddComponent(block3_sprite);
     block3->AddComponent(block3_collision);
 
-    AddObject(block3);
+    AddEntity(block3);
 
     // Fourth block.
-    auto *block4 = new Object;
+    auto *block4 = new Entity;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("OrangeBlock"));
     auto *block4_collision = new CollisionComponent(block4_sprite->surface->w, block4_sprite->surface->h);
 
-    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    Utility::CenterEntity(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
     block4->x += 32;
 
     block4->AddComponent(block4_sprite);
     block4->AddComponent(block4_collision);
 
-    AddObject(block4);
+    AddEntity(block4);
 
-    return new Block(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4);
 }
 
-Block *GameScene::CreateOBlock()
+Composite *GameScene::CreateOBlock()
 {
     // First block.
-    auto *block1 = new Object;
+    auto *block1 = new Entity;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
     auto *block1_collision = new CollisionComponent(block1_sprite->surface->w, block1_sprite->surface->h);
 
-    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
+    Utility::CenterEntity(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
 
     block1->AddComponent(block1_sprite);
     block1->AddComponent(block1_collision);
 
-    AddObject(block1);
+    AddEntity(block1);
 
     // Second block.
-    auto *block2 = new Object;
+    auto *block2 = new Entity;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
     auto *block2_collision = new CollisionComponent(block2_sprite->surface->w, block2_sprite->surface->h);
 
-    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    Utility::CenterEntity(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
     block2->y -= 32;
 
     block2->AddComponent(block2_sprite);
     block2->AddComponent(block2_collision);
 
-    AddObject(block2);
+    AddEntity(block2);
 
     // Third block.
-    auto *block3 = new Object;
+    auto *block3 = new Entity;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
     auto *block3_collision = new CollisionComponent(block3_sprite->surface->w, block3_sprite->surface->h);
 
-    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    Utility::CenterEntity(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
     block3->x += 32;
     block3->y -= 32;
 
     block3->AddComponent(block3_sprite);
     block3->AddComponent(block3_collision);
 
-    AddObject(block3);
+    AddEntity(block3);
 
     // Fourth block.
-    auto *block4 = new Object;
+    auto *block4 = new Entity;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("YellowBlock"));
     auto *block4_collision = new CollisionComponent(block4_sprite->surface->w, block4_sprite->surface->h);
 
-    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    Utility::CenterEntity(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
     block4->x += 32;
 
     block4->AddComponent(block4_sprite);
     block4->AddComponent(block4_collision);
 
-    AddObject(block4);
+    AddEntity(block4);
 
-    return new Block(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4);
 }
 
-Block *GameScene::CreateSBlock()
+Composite *GameScene::CreateSBlock()
 {
     // First block.
-    auto *block1 = new Object;
+    auto *block1 = new Entity;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("GreenBlock"));
     auto *block1_collision = new CollisionComponent(block1_sprite->surface->w, block1_sprite->surface->h);
 
-    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
+    Utility::CenterEntity(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
 
     block1->AddComponent(block1_sprite);
     block1->AddComponent(block1_collision);
 
-    AddObject(block1);
+    AddEntity(block1);
 
     // Second block.
-    auto *block2 = new Object;
+    auto *block2 = new Entity;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("GreenBlock"));
     auto *block2_collision = new CollisionComponent(block2_sprite->surface->w, block2_sprite->surface->h);
 
-    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    Utility::CenterEntity(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
     block2->x += 32;
     block2->y -= 32;
 
     block2->AddComponent(block2_sprite);
     block2->AddComponent(block2_collision);
 
-    AddObject(block2);
+    AddEntity(block2);
 
     // Third block.
-    auto *block3 = new Object;
+    auto *block3 = new Entity;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("GreenBlock"));
     auto *block3_collision = new CollisionComponent(block3_sprite->surface->w, block3_sprite->surface->h);
 
-    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    Utility::CenterEntity(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
     block3->x -= 32;
 
     block3->AddComponent(block3_sprite);
     block3->AddComponent(block3_collision);
 
-    AddObject(block3);
+    AddEntity(block3);
 
     // Fourth block.
-    auto *block4 = new Object;
+    auto *block4 = new Entity;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("GreenBlock"));
     auto *block4_collision = new CollisionComponent(block4_sprite->surface->w, block4_sprite->surface->h);
 
-    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    Utility::CenterEntity(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
     block4->y -= 32;
 
     block4->AddComponent(block4_sprite);
     block4->AddComponent(block4_collision);
 
-    AddObject(block4);
+    AddEntity(block4);
 
-    return new Block(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4);
 }
 
-Block *GameScene::CreateTBlock()
+Composite *GameScene::CreateTBlock()
 {
     // First block.
-    auto *block1 = new Object;
+    auto *block1 = new Entity;
     auto *block1_sprite = new SpriteComponent(ResourceManager::GetImagePath("PurpleBlock"));
     auto *block1_collision = new CollisionComponent(block1_sprite->surface->w, block1_sprite->surface->h);
 
-    Utility::CenterObject(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
+    Utility::CenterEntity(block1, RenderSystem::background, block1_sprite->surface->w, block1_sprite->surface->h);
 
     block1->AddComponent(block1_sprite);
     block1->AddComponent(block1_collision);
 
-    AddObject(block1);
+    AddEntity(block1);
 
     // Second block.
-    auto *block2 = new Object;
+    auto *block2 = new Entity;
     auto *block2_sprite = new SpriteComponent(ResourceManager::GetImagePath("PurpleBlock"));
     auto *block2_collision = new CollisionComponent(block2_sprite->surface->w, block2_sprite->surface->h);
 
-    Utility::CenterObject(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
+    Utility::CenterEntity(block2, RenderSystem::background, block2_sprite->surface->w, block2_sprite->surface->h);
     block2->y -= 32;
 
     block2->AddComponent(block2_sprite);
     block2->AddComponent(block2_collision);
 
-    AddObject(block2);
+    AddEntity(block2);
 
     // Third block.
-    auto *block3 = new Object;
+    auto *block3 = new Entity;
     auto *block3_sprite = new SpriteComponent(ResourceManager::GetImagePath("PurpleBlock"));
     auto *block3_collision = new CollisionComponent(block3_sprite->surface->w, block3_sprite->surface->h);
 
-    Utility::CenterObject(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
+    Utility::CenterEntity(block3, RenderSystem::background, block3_sprite->surface->w, block3_sprite->surface->h);
     block3->x -= 32;
 
     block3->AddComponent(block3_sprite);
     block3->AddComponent(block3_collision);
 
-    AddObject(block3);
+    AddEntity(block3);
 
     // Fourth block.
-    auto *block4 = new Object;
+    auto *block4 = new Entity;
     auto *block4_sprite = new SpriteComponent(ResourceManager::GetImagePath("PurpleBlock"));
     auto *block4_collision = new CollisionComponent(block4_sprite->surface->w, block4_sprite->surface->h);
 
-    Utility::CenterObject(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
+    Utility::CenterEntity(block4, RenderSystem::background, block4_sprite->surface->w, block4_sprite->surface->h);
     block4->x += 32;
 
     block4->AddComponent(block4_sprite);
     block4->AddComponent(block4_collision);
 
-    AddObject(block4);
+    AddEntity(block4);
 
-    return new Block(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4);
 }
 
-Block *GameScene::CreateRandomBlock()
+Composite *GameScene::CreateRandomBlock()
 {
-    Block *block = (this->*block_spawners[std::rand() % COUNT_BLOCK_SPAWNERS])();
-    block->Translate(0, -192); // @TODO: Find a better way to determine starting position.
+    Composite *block = (this->*block_spawners[std::rand() % COUNT_BLOCK_SPAWNERS])();
+    BlockTranslate(block, 0, -192); // @TODO: Find a better way to determine starting position.
     return block;
 }
 
@@ -510,14 +508,14 @@ GameScene::GameScene()
 void GameScene::OnLoad()
 {
     // Playing Area
-    auto *area = new Object;
+    auto *area = new Entity;
     auto *area_sprite = new SpriteComponent(ResourceManager::GetImagePath("PlayingArea"));
-    Utility::CenterObject(area, RenderSystem::background, area_sprite->surface->w, area_sprite->surface->h);
+    Utility::CenterEntity(area, RenderSystem::background, area_sprite->surface->w, area_sprite->surface->h);
     area->AddComponent(area_sprite);
-    AddObject(area);
+    AddEntity(area);
     
     // Menu Button
-    auto *menu_button = new Object;
+    auto *menu_button = new Entity;
     auto *menu_button_sprite = new SpriteComponent(ResourceManager::GetImagePath("Menu"));
 
     auto *menu_button_ui = new UIComponent;
@@ -527,30 +525,30 @@ void GameScene::OnLoad()
     menu_button->AddComponent(menu_button_ui);
     menu_button->AddComponent(menu_button_sprite);
 
-    AddObject(menu_button);
+    AddEntity(menu_button);
 
     // Bottom Collider
-    auto *bottom = new Object;
+    auto *bottom = new Entity;
     auto *bottom_collision = new CollisionComponent(Constants::SCREEN_WIDTH, 1);
     bottom->y = 416;
     bottom->AddComponent(bottom_collision);
-    AddObject(bottom);
+    AddEntity(bottom);
 
     // Left Collider
-    auto *left = new Object;
+    auto *left = new Entity;
     auto *left_collision = new CollisionComponent(1, Constants::SCREEN_HEIGHT);
-    Utility::CenterObject(left, RenderSystem::background, 1, Constants::SCREEN_HEIGHT);
+    Utility::CenterEntity(left, RenderSystem::background, 1, Constants::SCREEN_HEIGHT);
     left->x = 207;
     left->AddComponent(left_collision);
-    AddObject(left);
+    AddEntity(left);
 
     // Right Collider
-    auto *right = new Object;
+    auto *right = new Entity;
     auto *right_collision = new CollisionComponent(1, Constants::SCREEN_HEIGHT);
-    Utility::CenterObject(right, RenderSystem::background, 1, Constants::SCREEN_HEIGHT);
+    Utility::CenterEntity(right, RenderSystem::background, 1, Constants::SCREEN_HEIGHT);
     right->x = 432;
     right->AddComponent(right_collision);
-    AddObject(right);
+    AddEntity(right);
 
     // Create block.
     current_block = CreateRandomBlock();
@@ -559,14 +557,14 @@ void GameScene::OnLoad()
 void GameScene::OnUnload()
 {
     // @TODO: abstract this?
-    for (auto object : objects) {
-        delete object;
+    for (auto entity : entities) {
+        delete entity;
     }
 }
 
 // Dumb collision detection. Relies on a few assumptions, including that we will never try to move "past" another collider.
 // @TODO: Should probably generalize this a bit for the engine. But this works for Tetris. Also will need another solution for moving the block horizontally.
-bool CollidesDown(Object *source, Object *other)
+bool CollidesDown(Entity *source, Entity *other)
 {
     auto *source_collision = source->GetComponent<CollisionComponent>();
     auto *other_collision = other->GetComponent<CollisionComponent>();
@@ -586,7 +584,7 @@ bool CollidesDown(Object *source, Object *other)
     return ((source_left < other_right && source_left >= other_left) || (source_right > other_left && source_right <= other_right)) && source_bottom == other_top;
 }
 
-bool CollidesLeft(Object *source, Object *other)
+bool CollidesLeft(Entity *source, Entity *other)
 {
     auto *source_collision = source->GetComponent<CollisionComponent>();
     auto *other_collision = other->GetComponent<CollisionComponent>();
@@ -606,7 +604,7 @@ bool CollidesLeft(Object *source, Object *other)
     return ((source_top < other_bottom && source_top >= other_top) || (source_bottom < other_top && source_bottom >= other_bottom)) && source_left == other_right;
 }
 
-bool CollidesRight(Object *source, Object *other)
+bool CollidesRight(Entity *source, Entity *other)
 {
     auto *source_collision = source->GetComponent<CollisionComponent>();
     auto *other_collision = other->GetComponent<CollisionComponent>();
@@ -629,7 +627,7 @@ bool CollidesRight(Object *source, Object *other)
 bool GameScene::CanMoveDirection(Direction direction)
 {
     bool can_move = true;
-    bool (*function)(Object*, Object*) = nullptr;
+    bool (*function)(Entity*, Entity*) = nullptr;
 
     switch (direction) {
         case DIRECTION_LEFT:
@@ -648,17 +646,13 @@ bool GameScene::CanMoveDirection(Direction direction)
     }
 
     // @NOTE: When we implement block deletion, this will need to be updated so we aren't using dangling pointers.
-    std::vector<Object *> sub_blocks = {
-        current_block->block1, current_block->block2, current_block->block3, current_block->block4
-    };
-
-    for (auto *block : sub_blocks) {
-        for (auto *object : this->objects) {
-            if (std::find(sub_blocks.begin(), sub_blocks.end(), object) != sub_blocks.end()) {
+    for (auto *block : current_block->entities) {
+        for (auto *entity : this->entities) {
+            if (std::find(current_block->entities.begin(), current_block->entities.end(), entity) != current_block->entities.end()) {
                 continue;
             }
 
-            if (function(block, object)) {
+            if (function(block, entity)) {
                 can_move = false; 
             }
         }
@@ -670,20 +664,20 @@ bool GameScene::CanMoveDirection(Direction direction)
 void GameScene::HandleBlockControl()
 {
     if (EventSystem::IsKeyDown(SDL_SCANCODE_A) && CanMoveDirection(DIRECTION_LEFT)) {
-        current_block->Translate(-SHIFT_AMOUNT, 0);
+        BlockTranslate(current_block, -SHIFT_AMOUNT, 0);
     }
 
     if (EventSystem::IsKeyDown(SDL_SCANCODE_D) && CanMoveDirection(DIRECTION_RIGHT)) {
-        current_block->Translate(SHIFT_AMOUNT, 0);
+        BlockTranslate(current_block, SHIFT_AMOUNT, 0);
     }
 
     if (CanMoveDirection(DIRECTION_LEFT) && CanMoveDirection(DIRECTION_RIGHT)) {
         if (EventSystem::IsKeyDown(SDL_SCANCODE_Q)) {
-            current_block->RotateLeft();
+            BlockRotateLeft(current_block);
         }
 
         if (EventSystem::IsKeyDown(SDL_SCANCODE_E)) {
-            current_block->RotateRight();
+            BlockRotateRight(current_block);
         }
     }
 }
@@ -700,12 +694,12 @@ void GameScene::HandleBlockGravity(float elapsed)
             current_block = CreateRandomBlock();
             return;
         }
-        current_block->Translate(0, DROP_AMOUNT);
+        BlockTranslate(current_block, 0, DROP_AMOUNT);
         since_last_drop = 0;
 
     } else if (EventSystem::IsKeyDown(SDL_SCANCODE_S)) {
         while (CanMoveDirection(DIRECTION_DOWN)) {
-            current_block->Translate(0, DROP_AMOUNT);
+            BlockTranslate(current_block, 0, DROP_AMOUNT);
         }
         current_block = CreateRandomBlock();
         since_last_drop = 0;
@@ -722,11 +716,11 @@ void GameScene::HandleScoring()
     static const int MAX_Y = 384;
     static const int MIN_X = 208;
 
-    Object *fill_table[ROWS][COLS] = { nullptr };
+    Entity *fill_table[ROWS][COLS] = { nullptr };
 
-    for (auto *object : objects) {
-        if (object && object->type == "Block" && !current_block->HasBlock(object)) {
-            fill_table[ROWS - ((MAX_Y - object->y) / DROP_AMOUNT) - 1][(object->x - MIN_X) / DROP_AMOUNT] = object;
+    for (auto *entity : entities) {
+        if (entity && entity->type == "Block" && !HasBlock(current_block, entity)) {
+            fill_table[ROWS - ((MAX_Y - entity->y) / DROP_AMOUNT) - 1][(entity->x - MIN_X) / DROP_AMOUNT] = entity;
         }
     }
 
@@ -749,15 +743,15 @@ void GameScene::HandleScoring()
 
             for (int j = 0; j < COLS; j++) {
                 delete fill_table[i][j];
-                RemoveObject(fill_table[i][j]);
+                RemoveEntity(fill_table[i][j]);
             }
         }
     }
 
     if (rows_deleted > 0) {
-        for (auto *object : objects) {
-            if (object != nullptr && object->type == "Block" && !current_block->HasBlock(object) && MAX_Y - object->y > min_delted_row_lvl * DROP_AMOUNT) {
-                object->y += DROP_AMOUNT * rows_deleted;
+        for (auto *entity : entities) {
+            if (entity != nullptr && entity->type == "Block" && !HasBlock(current_block, entity) && MAX_Y - entity->y > min_delted_row_lvl * DROP_AMOUNT) {
+                entity->y += DROP_AMOUNT * rows_deleted;
             }
         }
     }
@@ -768,9 +762,9 @@ void GameScene::Update(float elapsed)
     HandleBlockControl();
     HandleBlockGravity(elapsed);
 
-    for (auto *object : objects) {
+    for (auto *entity : entities) {
         // @TODO: Better way to determine top of playing area.
-        if (object->type == "Block" && !current_block->HasBlock(object) && object->y <= 32) {
+        if (entity->type == "Block" && !HasBlock(current_block, entity) && entity->y <= 32) {
             auto *scene = new MainMenuScene;
             SceneSystem::Load(scene);
         }

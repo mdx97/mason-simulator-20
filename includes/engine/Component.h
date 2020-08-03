@@ -1,15 +1,15 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-class Object;
+class Entity;
 
 class Component
 {
 public:
     virtual void Update(float elapsed) = 0;
-    Object *object = nullptr;
+    Entity *entity = nullptr;
 };
 
-#include "engine/Object.h"
+#include "engine/Entity.h"
 
 #endif

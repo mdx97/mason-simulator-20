@@ -5,15 +5,15 @@
 
 SDL_Surface *RenderSystem::background = nullptr;
 
-void DrawObjects(const std::vector<Object *> &objects)
+void DrawEntities(const std::vector<Entity *> &entities)
 {
-    for (auto *object : objects) {
-        SpriteComponent *sprite = object->GetComponent<SpriteComponent>();
+    for (auto *entity : entities) {
+        SpriteComponent *sprite = entity->GetComponent<SpriteComponent>();
 
         if (sprite != nullptr) {
             SDL_Rect rect = { 
-                object->x + sprite->x,
-                object->y + sprite->y,
+                entity->x + sprite->x,
+                entity->y + sprite->y,
                 sprite->surface->w, 
                 sprite->surface->h 
             };
@@ -22,15 +22,15 @@ void DrawObjects(const std::vector<Object *> &objects)
     }
 }
 
-// Renders every object onto the background surface.
+// Renders every entity onto the background surface.
 void RenderSystem::Draw()
 {
     SDL_FillRect(background, nullptr, SDL_MapRGB(background->format, 0, 0, 0));
     
-    DrawObjects(SceneSystem::persistent_objects);
+    DrawEntities(SceneSystem::persistent_entities);
     
     if (SceneSystem::current != nullptr) {
-        DrawObjects(SceneSystem::current->objects);
+        DrawEntities(SceneSystem::current->entities);
     }
     
     SDL_UpdateWindowSurface(Engine::window);

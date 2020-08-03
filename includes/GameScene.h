@@ -1,12 +1,10 @@
 #ifndef GAMESCENE_H
 #define GAMESCENE_H
 
+#include "engine/Entity.h"
 #include "engine/Scene.h"
 
 #define COUNT_BLOCK_SPAWNERS 7
-
-// @TODO: When the block class is refactored, remove this forward declaration.
-class Block;
 
 typedef enum direction_e {
     DIRECTION_LEFT,
@@ -24,16 +22,16 @@ public:
     void Update(float elapsed) override;
 
 private:
-    Block *current_block = nullptr;
-    Block* (GameScene::* block_spawners[COUNT_BLOCK_SPAWNERS])();
-    Block *CreateIBlock();
-    Block *CreateZBlock();
-    Block *CreateJBlock();
-    Block *CreateLBlock();
-    Block *CreateOBlock();
-    Block *CreateSBlock();
-    Block *CreateTBlock();
-    Block *CreateRandomBlock();
+    Composite *current_block = nullptr;
+    Composite* (GameScene::* block_spawners[COUNT_BLOCK_SPAWNERS])();
+    Composite *CreateIBlock();
+    Composite *CreateZBlock();
+    Composite *CreateJBlock();
+    Composite *CreateLBlock();
+    Composite *CreateOBlock();
+    Composite *CreateSBlock();
+    Composite *CreateTBlock();
+    Composite *CreateRandomBlock();
 
     void HandleBlockControl();
     void HandleBlockGravity(float elapsed);

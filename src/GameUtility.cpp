@@ -1,5 +1,5 @@
 #include "engine/AudioSystem.h"
-#include "engine/Object.h"
+#include "engine/Entity.h"
 #include "engine/ResourceManager.h"
 #include "engine/SpriteComponent.h"
 #include "engine/UIComponent.h"
@@ -13,12 +13,12 @@ SDL_Surface *sound_surface = nullptr;
 SDL_Surface *muted_surface = nullptr;
 
 // Click handler for the sound toggle control.
-void ToggleSound(Object *object)
+void ToggleSound(Entity *entity)
 {
     muted = !muted;
     AudioSystem::ToggleSound(!muted);
     
-    auto *sprite = object->GetComponent<SpriteComponent>();
+    auto *sprite = entity->GetComponent<SpriteComponent>();
     
     if (sprite != nullptr)  {
         sprite->surface = !muted ? sound_surface : muted_surface;
@@ -26,9 +26,9 @@ void ToggleSound(Object *object)
 }
 
 // Creates the sound control that is shared across both scenes.
-Object *GameUtility::CreateSoundControl()
+Entity *GameUtility::CreateSoundControl()
 {
-    auto *sound = new Object;
+    auto *sound = new Entity;
 
     auto *sound_sprite = new SpriteComponent(!muted ? ResourceManager::GetImagePath("Sound") : ResourceManager::GetImagePath("Mute"));
     sound->x = 611;

@@ -1,17 +1,17 @@
 #include <algorithm>
 #include "engine/Scene.h"
 
-// Adds a new object to the scene.
-void Scene::AddObject(Object *object)
+// Adds a new entity to the scene.
+void Scene::AddEntity(Entity *entity)
 {
-    objects.push_back(object);
+    entities.push_back(entity);
 }
 
-void Scene::RemoveObject(Object *object)
+void Scene::RemoveEntity(Entity *entity)
 {
-    auto iter = std::find(objects.begin(), objects.end(), object);
+    auto iter = std::find(entities.begin(), entities.end(), entity);
     
-    if (iter != objects.end()) {
-        objects.erase(iter);
+    if (iter != entities.end()) {
+        entities.erase(iter);
     }
 }

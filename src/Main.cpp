@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     LoopedAudioClip theme(ResourceManager::GetAudioPath("Theme"));
     AudioSystem::PlayClip(&theme);
     
-    SceneSystem::AddPersistentObject(GameUtility::CreateSoundControl());
+    SceneSystem::AddPersistentEntity(GameUtility::CreateSoundControl());
 
     MainMenuScene mainmenu;
     SceneSystem::Load(&mainmenu);
