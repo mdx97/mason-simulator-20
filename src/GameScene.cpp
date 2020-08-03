@@ -54,6 +54,7 @@ public:
     void RotateLeft()
     {
         std::vector<Object *> sub_blocks = { block2, block3, block4 };
+
         for (auto *block : sub_blocks) {
             int offset_x = block->x - block1->x;
             int offset_y = block->y - block1->y;
@@ -65,6 +66,7 @@ public:
     void RotateRight()
     {
         std::vector<Object *> sub_blocks = { block2, block3, block4 };
+
         for (auto *block : sub_blocks) {
             int offset_x = block->x - block1->x;
             int offset_y = block->y - block1->y;
@@ -487,6 +489,13 @@ Block *GameScene::CreateTBlock()
     return new Block(block1, block2, block3, block4);
 }
 
+Block *GameScene::CreateRandomBlock()
+{
+    Block *block = (this->*block_spawners[std::rand() % COUNT_BLOCK_SPAWNERS])();
+    block->Translate(0, -192); // @TODO: Find a better way to determine starting position.
+    return block;
+}
+
 GameScene::GameScene()
 {
     block_spawners[0] = &GameScene::CreateIBlock;
@@ -496,13 +505,6 @@ GameScene::GameScene()
     block_spawners[4] = &GameScene::CreateOBlock;
     block_spawners[5] = &GameScene::CreateSBlock;
     block_spawners[6] = &GameScene::CreateTBlock;
-}
-
-Block *GameScene::CreateRandomBlock()
-{
-    Block *block = (this->*block_spawners[std::rand() % COUNT_BLOCK_SPAWNERS])();
-    block->Translate(0, -192); // @TODO: Find a better way to determine starting position.
-    return block;
 }
 
 void GameScene::OnLoad()
@@ -557,8 +559,9 @@ void GameScene::OnLoad()
 void GameScene::OnUnload()
 {
     // @TODO: abstract this?
-    for (auto object : objects)
+    for (auto object : objects) {
         delete object;
+    }
 }
 
 // Dumb collision detection. Relies on a few assumptions, including that we will never try to move "past" another collider.
@@ -651,7 +654,10 @@ bool GameScene::CanMoveDirection(Direction direction)
 
     for (auto *block : sub_blocks) {
         for (auto *object : this->objects) {
-            if (std::find(sub_blocks.begin(), sub_blocks.end(), object) != sub_blocks.end()) continue;
+            if (std::find(sub_blocks.begin(), sub_blocks.end(), object) != sub_blocks.end()) {
+                continue;
+            }
+
             if (function(block, object)) {
                 can_move = false; 
             }
@@ -712,6 +718,7 @@ void GameScene::HandleScoring()
 {
     static const int ROWS = 11;
     static const int COLS = 7;
+
     static const int MAX_Y = 384;
     static const int MIN_X = 208;
 
@@ -719,7 +726,7 @@ void GameScene::HandleScoring()
 
     for (auto *object : objects) {
         if (object && object->type == "Block" && !current_block->HasBlock(object)) {
-            fill_table[ROWS - ((MAX_Y - object->y) / 32) - 1][(object->x - MIN_X) / 32] = object;
+            fill_table[ROWS - ((MAX_Y - object->y) / DROP_AMOUNT) - 1][(object->x - MIN_X) / DROP_AMOUNT] = object;
         }
     }
 
@@ -728,15 +735,18 @@ void GameScene::HandleScoring()
 
     for (int i = 0; i < ROWS; i++) {
         bool row_filled = true;
+
         for (int j = 0; j < COLS; j++) {
             if (fill_table[i][j] == nullptr) {
                 row_filled = false;
+                break;
             }
         }
 
         if (row_filled) {
             rows_deleted++;
             min_delted_row_lvl = std::min(min_delted_row_lvl, ROWS - i - 1);
+
             for (int j = 0; j < COLS; j++) {
                 delete fill_table[i][j];
                 RemoveObject(fill_table[i][j]);
@@ -746,8 +756,8 @@ void GameScene::HandleScoring()
 
     if (rows_deleted > 0) {
         for (auto *object : objects) {
-            if (object && object->type == "Block" && !current_block->HasBlock(object) && MAX_Y - object->y > min_delted_row_lvl * 32) {
-                object->y += 32 * rows_deleted;
+            if (object != nullptr && object->type == "Block" && !current_block->HasBlock(object) && MAX_Y - object->y > min_delted_row_lvl * DROP_AMOUNT) {
+                object->y += DROP_AMOUNT * rows_deleted;
             }
         }
     }

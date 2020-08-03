@@ -46,9 +46,12 @@ void Engine::End()
 {
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     SDL_FreeSurface(surface);
+    
     SDL_DestroyWindow(window);
+
     surface = nullptr;
     window = nullptr;
     RenderSystem::background = nullptr;
+
     SDL_Quit();
 }

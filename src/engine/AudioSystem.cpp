@@ -20,8 +20,9 @@ void AudioCallback(void *userdata, Uint8 *stream, int len)
 
     for (int i = 0; i < len; i++) {
         int total = 0;
-        for (auto istream : streams)
+        for (auto istream : streams) {
             total += istream[i];
+        }
         
         stream[i] = total;
     }
@@ -59,8 +60,9 @@ void AudioSystem::PlayClip(AudioClip *clip)
         return;
     }
 
-    if (playing.size() == 0)
+    if (playing.size() == 0) {
         Initialize();
+    }
 
     playing.push_back(clip);
 }
@@ -69,8 +71,10 @@ void AudioSystem::PlayClip(AudioClip *clip)
 void AudioSystem::FreeClip(AudioClip *clip)
 {
     auto element = std::find(playing.begin(), playing.end(), clip);
-    if (element != playing.end())
+
+    if (element != playing.end()) {
         playing.erase(element);
+    }
 }
 
 // Controls whether or not audio is played.

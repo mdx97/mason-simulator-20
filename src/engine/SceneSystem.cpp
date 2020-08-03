@@ -21,8 +21,9 @@ void SceneSystem::Load(Scene *scene)
 void SceneSystem::Tick()
 {
     if (next != nullptr) {
-        if (current != nullptr)
+        if (current != nullptr) {
             current->OnUnload();
+        }
         current = next;
         current->OnLoad();
         next = nullptr;
@@ -39,13 +40,15 @@ void SceneSystem::Tick()
     current->Update(elapsed);
 
     for (auto *object : current->objects) {
-        for (auto *component : object->components)
+        for (auto *component : object->components) {
             component->Update(elapsed);
+        }
     }
 
     for (auto *object : persistent_objects) {
-        for (auto *component : object->components)
+        for (auto *component : object->components) {
             component->Update(elapsed);
+        }
     }
 }
 

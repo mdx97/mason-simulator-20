@@ -19,13 +19,9 @@ void EventSystem::Process()
     }
 
     while (SDL_PollEvent(&e) != 0) {
-        if (e.type == SDL_QUIT) {
-            EventSystem::exit = true;
-        } else if (e.type == SDL_MOUSEBUTTONDOWN) {
-            Mouse::left_click = true;
-        } else if (e.type == SDL_KEYDOWN) {
-            scancode_pressed_states[SDL_GetScancodeFromKey(e.key.keysym.sym)] = true;
-        }
+        if (e.type == SDL_QUIT)                     EventSystem::exit = true;
+        else if (e.type == SDL_MOUSEBUTTONDOWN)     Mouse::left_click = true;
+        else if (e.type == SDL_KEYDOWN)             scancode_pressed_states[SDL_GetScancodeFromKey(e.key.keysym.sym)] = true;
     }
 }
 

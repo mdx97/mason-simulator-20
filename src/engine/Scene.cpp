@@ -10,6 +10,7 @@ void Scene::AddObject(Object *object)
 void Scene::RemoveObject(Object *object)
 {
     auto iter = std::find(objects.begin(), objects.end(), object);
+    
     if (iter != objects.end()) {
         objects.erase(iter);
     }

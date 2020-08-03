@@ -20,8 +20,9 @@ void ToggleSound(Object *object)
     
     auto *sprite = object->GetComponent<SpriteComponent>();
     
-    if (sprite != nullptr) 
+    if (sprite != nullptr)  {
         sprite->surface = !muted ? sound_surface : muted_surface;
+    }
 }
 
 // Creates the sound control that is shared across both scenes.

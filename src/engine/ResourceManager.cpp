@@ -7,9 +7,10 @@
 // Will log an error return an empty string if an appropriate file is not found.
 std::string GetResourcePath(const std::string &id, const std::string &extension)
 {
-    std::fstream fstream;
     std::ostringstream sstream;
     sstream << "resources/" << id << "." << extension;
+
+    std::fstream fstream;
     fstream.open(sstream.str());
 
     if (fstream.fail()) {

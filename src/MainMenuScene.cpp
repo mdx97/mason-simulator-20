@@ -54,6 +54,7 @@ void MainMenuScene::OnLoad()
 void MainMenuScene::OnUnload()
 {
     // @TODO: abstract this?
-    for (auto object : objects)
+    for (auto object : objects) {
         delete object;
+    }
 }
