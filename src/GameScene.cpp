@@ -50,6 +50,28 @@ public:
         block4->y += y;
     }
 
+    void RotateLeft()
+    {
+        std::vector<Object *> sub_blocks = { block2, block3, block4 };
+        for (auto *block : sub_blocks) {
+            int offset_x = block->x - block1->x;
+            int offset_y = block->y - block1->y;
+            block->x = block1->x + offset_y;
+            block->y = block1->y + (offset_x * -1);
+        }
+    }
+
+    void RotateRight()
+    {
+        std::vector<Object *> sub_blocks = { block2, block3, block4 };
+        for (auto *block : sub_blocks) {
+            int offset_x = block->x - block1->x;
+            int offset_y = block->y - block1->y;
+            block->x = block1->x - offset_y;
+            block->y = block1->y - (offset_x * -1);
+        }
+    }
+
     bool HasBlock(Object *object)
     {
         if (object == nullptr) {
@@ -646,6 +668,16 @@ void GameScene::HandleBlockControl()
 
     if (EventSystem::IsKeyDown(SDL_SCANCODE_D) && CanMoveDirection(DIRECTION_RIGHT)) {
         current_block->Translate(SHIFT_AMOUNT, 0);
+    }
+
+    if (CanMoveDirection(DIRECTION_LEFT) && CanMoveDirection(DIRECTION_RIGHT)) {
+        if (EventSystem::IsKeyDown(SDL_SCANCODE_Q)) {
+            current_block->RotateLeft();
+        }
+
+        if (EventSystem::IsKeyDown(SDL_SCANCODE_E)) {
+            current_block->RotateRight();
+        }
     }
 }
 
