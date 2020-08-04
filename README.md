@@ -1,6 +1,6 @@
 # Mason Simulator '20
 
-![Image](resources/screenshots/game.png)
+![Image](resources/screenshots/screen.png)
 
 A Tetris clone with a custom game engine built from scratch with C++ and SDL.
 
