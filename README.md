@@ -26,7 +26,11 @@ make run
 ## Controls
 
 A - Move block left
+
 D - Move block right
+
 Q - Rotate block left
+
 E - Rotate block right
+
 S - Snap block into place
