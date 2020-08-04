@@ -496,6 +496,7 @@ Composite *GameScene::CreateRandomBlock()
 
 GameScene::GameScene()
 {
+    score = 0;
     block_spawners[0] = &GameScene::CreateIBlock;
     block_spawners[1] = &GameScene::CreateZBlock;
     block_spawners[2] = &GameScene::CreateJBlock;
@@ -507,6 +508,8 @@ GameScene::GameScene()
 
 void GameScene::OnLoad()
 {
+    score = 0;
+
     // Playing Area
     auto *area = new Entity;
     auto *area_sprite = new SpriteComponent(ResourceManager::GetImagePath("PlayingArea"));
@@ -549,6 +552,35 @@ void GameScene::OnLoad()
     right->x = 432;
     right->AddComponent(right_collision);
     AddEntity(right);
+
+    // Score
+    auto *digit1 = new Entity;
+    auto *digit2 = new Entity;
+    auto *digit3 = new Entity;
+
+    auto *digit1_sprite = new SpriteComponent(ResourceManager::GetImagePath("0"));
+    auto *digit2_sprite = new SpriteComponent(ResourceManager::GetImagePath("0"));
+    auto *digit3_sprite = new SpriteComponent(ResourceManager::GetImagePath("0"));
+
+    digit1->y = 32;
+    digit2->y = 32;
+    digit3->y = 32;
+
+    digit1->x = 564;
+    digit2->x = 532;
+    digit3->x = 500;
+
+    digit1->AddComponent(digit1_sprite);
+    digit2->AddComponent(digit2_sprite);
+    digit3->AddComponent(digit3_sprite);
+
+    AddEntity(digit1);
+    AddEntity(digit2);
+    AddEntity(digit3);
+
+    score_sprites[0] = digit1_sprite;
+    score_sprites[1] = digit2_sprite;
+    score_sprites[2] = digit3_sprite;
 
     // Create block.
     current_block = CreateRandomBlock();
@@ -706,6 +738,29 @@ void GameScene::HandleBlockGravity(float elapsed)
     }
 }
 
+void GameScene::UpdateScore()
+{
+    if (score >= 999) {
+        for (auto *sprite : score_sprites) {
+            SDL_FreeSurface(sprite->surface);
+            sprite->surface = SDL_LoadBMP(ResourceManager::GetImagePath("9").c_str());
+        }
+    }
+
+    int i = 0;
+    int temp = score;
+
+    while (temp > 0) {
+        int digit = temp % 10;
+        
+        SDL_FreeSurface(score_sprites[i]->surface);
+        score_sprites[i]->surface = SDL_LoadBMP(ResourceManager::GetImagePath(std::to_string(digit)).c_str());
+        
+        temp /= 10;
+        i++;
+    }
+}
+
 // @TODO: Clean this code up. Also, there may be an issue with blocks needing to fall more than the number of levels that were deleted? Not sure how this works in
 // real tetris. Should research.
 void GameScene::HandleScoring()
@@ -738,6 +793,7 @@ void GameScene::HandleScoring()
         }
 
         if (row_filled) {
+            score++;
             rows_deleted++;
             min_delted_row_lvl = std::min(min_delted_row_lvl, ROWS - i - 1);
 
@@ -754,6 +810,7 @@ void GameScene::HandleScoring()
                 entity->y += DROP_AMOUNT * rows_deleted;
             }
         }
+        UpdateScore();
     }
 }
 
