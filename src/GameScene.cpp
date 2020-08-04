@@ -4,6 +4,7 @@
 #include <vector>
 #include "engine/CollisionComponent.h"
 #include "engine/EventSystem.h"
+#include "engine/Logger.h"
 #include "engine/RenderSystem.h"
 #include "engine/ResourceManager.h"
 #include "engine/SceneSystem.h"
@@ -27,7 +28,62 @@ void BlockTranslate(Composite *composite, int x, int y)
     }
 }
 
-void BlockRotateLeft(Composite *composite)
+void GameScene::RotationPositionCorrect(Composite *composite)
+{
+    // Correct against left side barrier.
+    CollisionComponent *barrier_left_collider = barrier_left->GetComponent<CollisionComponent>();
+
+    if (barrier_left_collider != nullptr) {
+        bool check_left = true;
+
+        while (1) {
+            check_left = false;
+
+            for (auto *block : composite->entities) {
+                CollisionComponent *block_collider = block->GetComponent<CollisionComponent>();
+
+                if (block_collider != nullptr) {
+                    if (block->x + block_collider->x < barrier_left->x + barrier_left_collider->x + barrier_left_collider->w) {
+                        check_left = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!check_left) break;
+
+            BlockTranslate(composite, SHIFT_AMOUNT, 0);
+        }
+    }
+
+    // Correct against right side barrier.
+    CollisionComponent *barrier_right_collider = barrier_right->GetComponent<CollisionComponent>();
+
+    if (barrier_right_collider != nullptr) {
+        bool check_right = true;
+
+        while (1) {
+            check_right = false;
+
+            for (auto *block : composite->entities) {
+                CollisionComponent *block_collider = block->GetComponent<CollisionComponent>();
+
+                if (block_collider != nullptr) {
+                    if (block->x + block_collider->x + block_collider->w  > barrier_right->x + barrier_right_collider->x) {
+                        check_right = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!check_right) break;
+
+            BlockTranslate(composite, -SHIFT_AMOUNT, 0);
+        }
+    }
+}
+
+void GameScene::BlockRotateLeft(Composite *composite)
 {
     auto *block1 = composite->entities[0];
 
@@ -40,9 +96,11 @@ void BlockRotateLeft(Composite *composite)
         block->x = block1->x + offset_y;
         block->y = block1->y + (offset_x * -1);
     }
+
+    RotationPositionCorrect(composite);
 }
 
-void BlockRotateRight(Composite *composite)
+void GameScene::BlockRotateRight(Composite *composite)
 {
     auto *block1 = composite->entities[0];
     
@@ -55,6 +113,8 @@ void BlockRotateRight(Composite *composite)
         block->x = block1->x - offset_y;
         block->y = block1->y - (offset_x * -1);
     }
+
+    RotationPositionCorrect(composite);
 }
 
 bool HasBlock(Composite *composite, Entity *entity)
@@ -545,6 +605,8 @@ void GameScene::OnLoad()
     left->AddComponent(left_collision);
     AddEntity(left);
 
+    barrier_left = left;
+
     // Right Collider
     auto *right = new Entity;
     auto *right_collision = new CollisionComponent(1, Constants::SCREEN_HEIGHT);
@@ -553,6 +615,8 @@ void GameScene::OnLoad()
     right->AddComponent(right_collision);
     AddEntity(right);
 
+    barrier_right = right;
+    
     // Score
     auto *digit1 = new Entity;
     auto *digit2 = new Entity;
@@ -703,14 +767,12 @@ void GameScene::HandleBlockControl()
         BlockTranslate(current_block, SHIFT_AMOUNT, 0);
     }
 
-    if (CanMoveDirection(DIRECTION_LEFT) && CanMoveDirection(DIRECTION_RIGHT)) {
-        if (EventSystem::IsKeyDown(SDL_SCANCODE_Q)) {
-            BlockRotateLeft(current_block);
-        }
+    if (EventSystem::IsKeyDown(SDL_SCANCODE_Q)) {
+        BlockRotateLeft(current_block);
+    }
 
-        if (EventSystem::IsKeyDown(SDL_SCANCODE_E)) {
-            BlockRotateRight(current_block);
-        }
+    if (EventSystem::IsKeyDown(SDL_SCANCODE_E)) {
+        BlockRotateRight(current_block);
     }
 }
 
