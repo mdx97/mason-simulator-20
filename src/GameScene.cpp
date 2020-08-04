@@ -28,7 +28,7 @@ void BlockTranslate(Composite *composite, int x, int y)
     }
 }
 
-void GameScene::RotationPositionCorrect(Composite *composite)
+void GameScene::CorrectPositionAgainstBarriers(Composite *composite)
 {
     // Correct against left side barrier.
     CollisionComponent *barrier_left_collider = barrier_left->GetComponent<CollisionComponent>();
@@ -97,7 +97,7 @@ void GameScene::BlockRotateLeft(Composite *composite)
         block->y = block1->y + (offset_x * -1);
     }
 
-    RotationPositionCorrect(composite);
+    CorrectPositionAgainstBarriers(composite);
 }
 
 void GameScene::BlockRotateRight(Composite *composite)
@@ -114,16 +114,7 @@ void GameScene::BlockRotateRight(Composite *composite)
         block->y = block1->y - (offset_x * -1);
     }
 
-    RotationPositionCorrect(composite);
-}
-
-bool HasBlock(Composite *composite, Entity *entity)
-{
-    if (entity == nullptr) {
-        return false;
-    }
-
-    return std::find(composite->entities.begin(), composite->entities.end(), entity) != composite->entities.end();
+    CorrectPositionAgainstBarriers(composite);
 }
 
 void MenuButtonClick(Entity *entity)
@@ -132,7 +123,7 @@ void MenuButtonClick(Entity *entity)
     SceneSystem::Load(scene);
 }
 
-Composite *CreateBlockComposite(Entity *block1, Entity *block2, Entity *block3, Entity *block4)
+Composite *CreateBlockComposite(Entity *block1, Entity *block2, Entity *block3, Entity *block4, const char *type)
 {
     auto *composite = new Composite;
 
@@ -145,6 +136,8 @@ Composite *CreateBlockComposite(Entity *block1, Entity *block2, Entity *block3, 
     block2->type = "Block";
     block3->type = "Block";
     block4->type = "Block";
+
+    composite->type = type;
 
     return composite;
 }
@@ -203,7 +196,7 @@ Composite *GameScene::CreateIBlock()
     
     AddEntity(block4);
 
-    return CreateBlockComposite(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4, "I-Block");
 }
 
 Composite *GameScene::CreateZBlock()
@@ -260,7 +253,7 @@ Composite *GameScene::CreateZBlock()
 
     AddEntity(block4);
 
-    return CreateBlockComposite(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4, "Z-Block");
 }
 
 Composite *GameScene::CreateJBlock()
@@ -317,7 +310,7 @@ Composite *GameScene::CreateJBlock()
 
     AddEntity(block4);
 
-    return CreateBlockComposite(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4, "J-Block");
 }
 
 Composite *GameScene::CreateLBlock()
@@ -374,7 +367,7 @@ Composite *GameScene::CreateLBlock()
 
     AddEntity(block4);
 
-    return CreateBlockComposite(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4, "L-Block");
 }
 
 Composite *GameScene::CreateOBlock()
@@ -431,7 +424,7 @@ Composite *GameScene::CreateOBlock()
 
     AddEntity(block4);
 
-    return CreateBlockComposite(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4, "O-Block");
 }
 
 Composite *GameScene::CreateSBlock()
@@ -488,7 +481,7 @@ Composite *GameScene::CreateSBlock()
 
     AddEntity(block4);
 
-    return CreateBlockComposite(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4, "S-Block");
 }
 
 Composite *GameScene::CreateTBlock()
@@ -544,7 +537,7 @@ Composite *GameScene::CreateTBlock()
 
     AddEntity(block4);
 
-    return CreateBlockComposite(block1, block2, block3, block4);
+    return CreateBlockComposite(block1, block2, block3, block4, "T-Block");
 }
 
 Composite *GameScene::CreateRandomBlock()
@@ -767,12 +760,14 @@ void GameScene::HandleBlockControl()
         BlockTranslate(current_block, SHIFT_AMOUNT, 0);
     }
 
-    if (EventSystem::IsKeyDown(SDL_SCANCODE_Q)) {
-        BlockRotateLeft(current_block);
-    }
+    if (current_block->type != "O-Block") {
+        if (EventSystem::IsKeyDown(SDL_SCANCODE_Q)) {
+            BlockRotateLeft(current_block);
+        }
 
-    if (EventSystem::IsKeyDown(SDL_SCANCODE_E)) {
-        BlockRotateRight(current_block);
+        if (EventSystem::IsKeyDown(SDL_SCANCODE_E)) {
+            BlockRotateRight(current_block);
+        }
     }
 }
 
@@ -823,6 +818,15 @@ void GameScene::UpdateScore()
         temp /= 10;
         i++;
     }
+}
+
+bool HasBlock(Composite *composite, Entity *entity)
+{
+    if (entity == nullptr) {
+        return false;
+    }
+
+    return std::find(composite->entities.begin(), composite->entities.end(), entity) != composite->entities.end();
 }
 
 // @TODO: Clean this code up. Also, there may be an issue with blocks needing to fall more than the number of levels that were deleted? Not sure how this works in

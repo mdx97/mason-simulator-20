@@ -24,7 +24,7 @@ public:
 private:
     Composite *current_block = nullptr;
     Composite* (GameScene::* block_spawners[COUNT_BLOCK_SPAWNERS])();
-    
+
     int score;
     SpriteComponent *score_sprites[3];
 
@@ -42,7 +42,9 @@ private:
 
     void BlockRotateLeft(Composite *composite);
     void BlockRotateRight(Composite *composite);
-    void RotationPositionCorrect(Composite *composite);
+
+    void CorrectPositionAgainstBarrier(Composite *composite, Entity *barrier);
+    void CorrectPositionAgainstBarriers(Composite *composite);
 
     void UpdateScore();
 
