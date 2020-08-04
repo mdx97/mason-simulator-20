@@ -826,6 +826,7 @@ void GameScene::Update(float elapsed)
         if (entity->type == "Block" && !HasBlock(current_block, entity) && entity->y <= 32) {
             auto *scene = new MainMenuScene;
             SceneSystem::Load(scene);
+            return;
         }
     }
 
