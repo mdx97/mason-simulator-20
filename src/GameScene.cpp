@@ -754,7 +754,9 @@ void GameScene::UpdateScore()
         int digit = temp % 10;
         
         SDL_FreeSurface(score_sprites[i]->surface);
-        score_sprites[i]->surface = SDL_LoadBMP(ResourceManager::GetImagePath(std::to_string(digit)).c_str());
+
+        auto path = ResourceManager::GetImagePath(std::to_string(digit)).c_str();
+        score_sprites[i]->surface = SDL_LoadBMP(path);
         
         temp /= 10;
         i++;
