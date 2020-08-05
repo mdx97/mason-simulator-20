@@ -21,7 +21,7 @@ const int DROP_AMOUNT = 32;
 const int SHIFT_AMOUNT = 32;
 
 void BlockTranslate(Composite *composite, int x, int y)
-{
+{ 
     for (auto *entity : composite->entities) {
         entity->x += x;
         entity->y += y;
@@ -843,14 +843,21 @@ void GameScene::HandleScoring()
 
     for (auto *entity : entities) {
         if (entity && entity->type == "Block" && !HasBlock(current_block, entity)) {
-            fill_table[ROWS - ((MAX_Y - entity->y) / DROP_AMOUNT) - 1][(entity->x - MIN_X) / DROP_AMOUNT] = entity;
+            int row = ROWS - ((MAX_Y - entity->y) / DROP_AMOUNT) - 1;
+            int col = (entity->x - MIN_X) / DROP_AMOUNT;
+            fill_table[row][col] = entity;
         }
     }
 
-    int rows_deleted = 0;
-    int min_delted_row_lvl = ROWS;
+    int rows_deleted_acc[ROWS];
 
-    for (int i = 0; i < ROWS; i++) {
+    std::memset(rows_deleted_acc, 0, ROWS * sizeof(int));
+
+    for (int i = ROWS - 1; i >= 0; i--) {
+        if (i < ROWS - 1) {
+            rows_deleted_acc[i] = rows_deleted_acc[i + 1];
+        }
+
         bool row_filled = true;
 
         for (int j = 0; j < COLS; j++) {
@@ -862,8 +869,7 @@ void GameScene::HandleScoring()
 
         if (row_filled) {
             score++;
-            rows_deleted++;
-            min_delted_row_lvl = std::min(min_delted_row_lvl, ROWS - i - 1);
+            rows_deleted_acc[i] += 1;
 
             for (int j = 0; j < COLS; j++) {
                 delete fill_table[i][j];
@@ -872,10 +878,10 @@ void GameScene::HandleScoring()
         }
     }
 
-    if (rows_deleted > 0) {
+    if (rows_deleted_acc[0] > 0) {
         for (auto *entity : entities) {
-            if (entity != nullptr && entity->type == "Block" && !HasBlock(current_block, entity) && MAX_Y - entity->y > min_delted_row_lvl * DROP_AMOUNT) {
-                entity->y += DROP_AMOUNT * rows_deleted;
+            if (entity != nullptr && entity->type == "Block" && !HasBlock(current_block, entity)) {
+                entity->y += DROP_AMOUNT * rows_deleted_acc[ROWS - ((MAX_Y - entity->y) / DROP_AMOUNT) - 1];
             }
         }
         UpdateScore();
