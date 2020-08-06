@@ -27,8 +27,9 @@ void AudioCallback(void *userdata, Uint8 *stream, int len)
         stream[i] = total;
     }
 
-    for (auto istream : streams)
+    for (auto istream : streams) {
         delete istream;
+    }
 }
 
 // Opens the default audio device to allow for audio playback.

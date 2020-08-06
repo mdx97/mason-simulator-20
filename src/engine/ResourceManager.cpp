@@ -3,8 +3,7 @@
 #include "engine/Logger.h"
 #include "engine/ResourceManager.h"
 
-// Helper function for getting resource paths.
-// Will log an error return an empty string if an appropriate file is not found.
+// Helper function for resolving arbitrary resource paths.
 std::string GetResourcePath(const std::string &id, const std::string &extension)
 {
     std::ostringstream sstream;

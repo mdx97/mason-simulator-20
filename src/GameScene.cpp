@@ -850,7 +850,6 @@ void GameScene::HandleScoring()
     }
 
     int rows_deleted_acc[ROWS];
-
     std::memset(rows_deleted_acc, 0, ROWS * sizeof(int));
 
     for (int i = ROWS - 1; i >= 0; i--) {
@@ -872,7 +871,6 @@ void GameScene::HandleScoring()
             rows_deleted_acc[i] += 1;
 
             for (int j = 0; j < COLS; j++) {
-                delete fill_table[i][j];
                 RemoveEntity(fill_table[i][j]);
             }
         }

@@ -25,6 +25,7 @@ void EventSystem::Process()
     }
 }
 
+// Returns whether the given key was pressed this frame.
 bool EventSystem::IsKeyDown(SDL_Scancode scancode)
 {
     return scancode_pressed_states[scancode];

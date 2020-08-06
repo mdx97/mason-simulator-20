@@ -9,6 +9,7 @@ AudioClip::AudioClip(const std::string &filepath)
         std::ostringstream stream;
         stream << "Error occured loading WAV file at path '" << filepath << "'! Zeroing AudioClip properties...";
         Logger::Write(stream.str());
+
         SDL_zero(audio_spec);
         buffer = nullptr;
         length = 0;
@@ -59,7 +60,8 @@ void LoopedAudioClip::Callback(void *userdata, Uint8 *stream, int len)
         pointer++;
 
         // If we have reached the end of our clip's audio buffer, wrap around to the beginning.
-        if (pointer == buffer + length)
+        if (pointer == buffer + length) {
             Reset();
+        }
     }
 }

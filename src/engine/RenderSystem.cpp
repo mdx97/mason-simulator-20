@@ -5,6 +5,7 @@
 
 SDL_Surface *RenderSystem::background = nullptr;
 
+// Renders the sprites (if they exist) of the given list of entities.
 void DrawEntities(const std::vector<Entity *> &entities)
 {
     for (auto *entity : entities) {
