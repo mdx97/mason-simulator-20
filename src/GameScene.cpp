@@ -16,6 +16,20 @@
 #include "GameUtility.h"
 #include "MainMenuScene.h"
 
+// @TODO: Replace with 2d vectors?
+const int BLOCK_SPAWN_X_CENTER_OFFSET = 0;
+const int BLOCK_SPAWN_Y_CENTER_OFFSET = -192;
+const int BLOCK_SPAWN_X_DECK_OFFSET = -224;
+const int BLOCK_SPAWN_Y_DECK_OFFSET = -128;
+const int BLOCK_DECK_X_CENTER_OFFSET = 224;
+const int BLOCK_DECK_Y_CENTER_OFFSET = -64;
+
+const int ROWS = 11;
+const int COLS = 7;
+
+const int MAX_Y = 384;
+const int MIN_X = 208;
+
 const int DROP_RATE = 1;
 const int DROP_AMOUNT = 32;
 const int SHIFT_AMOUNT = 32;
@@ -540,16 +554,29 @@ Composite *GameScene::CreateTBlock()
     return CreateBlockComposite(block1, block2, block3, block4, "T-Block");
 }
 
-Composite *GameScene::CreateRandomBlock()
+void GameScene::SpawnInitialBlock()
 {
-    Composite *block = (this->*block_spawners[std::rand() % COUNT_BLOCK_SPAWNERS])();
-    BlockTranslate(block, 0, -192); // @TODO: Find a better way to determine starting position.
-    return block;
+    current_block = (this->*block_spawners[std::rand() % COUNT_BLOCK_SPAWNERS])();
+    BlockTranslate(current_block, BLOCK_SPAWN_X_CENTER_OFFSET, BLOCK_SPAWN_Y_CENTER_OFFSET);
+
+    next_block = (this->*block_spawners[std::rand() % COUNT_BLOCK_SPAWNERS])();
+    BlockTranslate(next_block, BLOCK_DECK_X_CENTER_OFFSET, BLOCK_DECK_Y_CENTER_OFFSET);
+}
+
+void GameScene::SpawnBlock()
+{
+    current_block = next_block;
+    BlockTranslate(current_block, BLOCK_SPAWN_X_DECK_OFFSET, BLOCK_SPAWN_Y_DECK_OFFSET);
+
+    next_block = (this->*block_spawners[std::rand() % COUNT_BLOCK_SPAWNERS])();
+    BlockTranslate(next_block, BLOCK_DECK_X_CENTER_OFFSET, BLOCK_DECK_Y_CENTER_OFFSET);
 }
 
 GameScene::GameScene()
 {
     score = 0;
+    since_last_drop = 0;
+
     block_spawners[0] = &GameScene::CreateIBlock;
     block_spawners[1] = &GameScene::CreateZBlock;
     block_spawners[2] = &GameScene::CreateJBlock;
@@ -562,6 +589,7 @@ GameScene::GameScene()
 void GameScene::OnLoad()
 {
     score = 0;
+    since_last_drop = 0;
 
     // Playing Area
     auto *area = new Entity;
@@ -640,7 +668,7 @@ void GameScene::OnLoad()
     score_sprites[2] = digit3_sprite;
 
     // Create block.
-    current_block = CreateRandomBlock();
+    SpawnInitialBlock();
 }
 
 void GameScene::OnUnload()
@@ -773,14 +801,11 @@ void GameScene::HandleBlockControl()
 
 void GameScene::HandleBlockGravity(float elapsed)
 {
-    // @TODO: Probably move this into constructor or OnLoad()?
-    static float since_last_drop = 0;
-    
     since_last_drop += elapsed;
 
     if (since_last_drop >= DROP_RATE) {
         if (!CanMoveDirection(DIRECTION_DOWN)) {
-            current_block = CreateRandomBlock();
+            SpawnBlock();
             return;
         }
         BlockTranslate(current_block, 0, DROP_AMOUNT);
@@ -790,7 +815,7 @@ void GameScene::HandleBlockGravity(float elapsed)
         while (CanMoveDirection(DIRECTION_DOWN)) {
             BlockTranslate(current_block, 0, DROP_AMOUNT);
         }
-        current_block = CreateRandomBlock();
+        SpawnBlock();
         since_last_drop = 0;
     }
 }
@@ -829,20 +854,12 @@ bool HasBlock(Composite *composite, Entity *entity)
     return std::find(composite->entities.begin(), composite->entities.end(), entity) != composite->entities.end();
 }
 
-// @TODO: Clean this code up. Also, there may be an issue with blocks needing to fall more than the number of levels that were deleted? Not sure how this works in
-// real tetris. Should research.
 void GameScene::HandleScoring()
 {
-    static const int ROWS = 11;
-    static const int COLS = 7;
-
-    static const int MAX_Y = 384;
-    static const int MIN_X = 208;
-
     Entity *fill_table[ROWS][COLS] = { nullptr };
 
     for (auto *entity : entities) {
-        if (entity && entity->type == "Block" && !HasBlock(current_block, entity)) {
+        if (entity && entity->type == "Block" && !HasBlock(current_block, entity) && !HasBlock(next_block, entity)) {
             int row = ROWS - ((MAX_Y - entity->y) / DROP_AMOUNT) - 1;
             int col = (entity->x - MIN_X) / DROP_AMOUNT;
             fill_table[row][col] = entity;
@@ -878,7 +895,7 @@ void GameScene::HandleScoring()
 
     if (rows_deleted_acc[0] > 0) {
         for (auto *entity : entities) {
-            if (entity != nullptr && entity->type == "Block" && !HasBlock(current_block, entity)) {
+            if (entity != nullptr && entity->type == "Block" && !HasBlock(current_block, entity) && !HasBlock(next_block, entity)) {
                 entity->y += DROP_AMOUNT * rows_deleted_acc[ROWS - ((MAX_Y - entity->y) / DROP_AMOUNT) - 1];
             }
         }
