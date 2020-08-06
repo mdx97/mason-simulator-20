@@ -34,70 +34,47 @@ const int DROP_RATE = 1;
 const int DROP_AMOUNT = 32;
 const int SHIFT_AMOUNT = 32;
 
-void BlockTranslate(Composite *composite, int x, int y)
-{ 
-    for (auto *entity : composite->entities) {
-        entity->x += x;
-        entity->y += y;
-    }
-}
+typedef struct collision_component_world_data {
+    int left, right, top, bottom;
+} CollisionComponentWorldData;
 
-void GameScene::CorrectPositionAgainstBarriers(Composite *composite)
+CollisionComponentWorldData TransformCollisionComponentWorld(Entity *entity, CollisionComponent *collider)
 {
-    // Correct against left side barrier.
-    CollisionComponent *barrier_left_collider = barrier_left->GetComponent<CollisionComponent>();
+    CollisionComponentWorldData data;
+    data.left = entity->x + collider->x;
+    data.top = entity->y + collider->y;
+    data.right = entity->x + collider->x + collider->w;
+    data.bottom = entity->y + collider->y + collider->h;
 
-    if (barrier_left_collider != nullptr) {
-        bool check_left = true;
-
-        while (1) {
-            check_left = false;
-
-            for (auto *block : composite->entities) {
-                CollisionComponent *block_collider = block->GetComponent<CollisionComponent>();
-
-                if (block_collider != nullptr) {
-                    if (block->x + block_collider->x < barrier_left->x + barrier_left_collider->x + barrier_left_collider->w) {
-                        check_left = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!check_left) break;
-
-            BlockTranslate(composite, SHIFT_AMOUNT, 0);
-        }
-    }
-
-    // Correct against right side barrier.
-    CollisionComponent *barrier_right_collider = barrier_right->GetComponent<CollisionComponent>();
-
-    if (barrier_right_collider != nullptr) {
-        bool check_right = true;
-
-        while (1) {
-            check_right = false;
-
-            for (auto *block : composite->entities) {
-                CollisionComponent *block_collider = block->GetComponent<CollisionComponent>();
-
-                if (block_collider != nullptr) {
-                    if (block->x + block_collider->x + block_collider->w  > barrier_right->x + barrier_right_collider->x) {
-                        check_right = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!check_right) break;
-
-            BlockTranslate(composite, -SHIFT_AMOUNT, 0);
-        }
-    }
+    return data;
 }
 
-void GameScene::BlockRotateLeft(Composite *composite)
+bool GameScene::OverlapsAny(Composite *composite)
+{
+    for (auto *block : composite->entities) {
+        if (CollisionComponent *block_collider = block->GetComponent<CollisionComponent>()) {
+            auto block_collider_world = TransformCollisionComponentWorld(block, block_collider);
+
+            for (auto *entity : entities) {
+                if (entity == block) continue;
+                if (CollisionComponent *entity_collider = entity->GetComponent<CollisionComponent>()) {
+                    auto entity_collider_world = TransformCollisionComponentWorld(entity, entity_collider);
+    
+                    if (block_collider_world.left < entity_collider_world.right &&
+                        block_collider_world.right > entity_collider_world.left &&
+                        block_collider_world.top < entity_collider_world.bottom &&
+                        block_collider_world.bottom > entity_collider_world.top) {
+                            return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+void GameScene::BlockRotateLeft(Composite *composite, bool check_overlap = true)
 {
     auto *block1 = composite->entities[0];
 
@@ -111,10 +88,12 @@ void GameScene::BlockRotateLeft(Composite *composite)
         block->y = block1->y + (offset_x * -1);
     }
 
-    CorrectPositionAgainstBarriers(composite);
+    if (check_overlap && OverlapsAny(composite)) {
+        BlockRotateRight(composite, false);
+    }
 }
 
-void GameScene::BlockRotateRight(Composite *composite)
+void GameScene::BlockRotateRight(Composite *composite, bool check_overlap = true)
 {
     auto *block1 = composite->entities[0];
     
@@ -128,7 +107,9 @@ void GameScene::BlockRotateRight(Composite *composite)
         block->y = block1->y - (offset_x * -1);
     }
 
-    CorrectPositionAgainstBarriers(composite);
+    if (check_overlap && OverlapsAny(composite)) {
+        BlockRotateLeft(composite, false);
+    }
 }
 
 void MenuButtonClick(Entity *entity)
@@ -552,6 +533,14 @@ Composite *GameScene::CreateTBlock()
     AddEntity(block4);
 
     return CreateBlockComposite(block1, block2, block3, block4, "T-Block");
+}
+
+void BlockTranslate(Composite *composite, int x, int y)
+{ 
+    for (auto *entity : composite->entities) {
+        entity->x += x;
+        entity->y += y;
+    }
 }
 
 void GameScene::SpawnInitialBlock()

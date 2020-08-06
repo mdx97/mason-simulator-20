@@ -36,10 +36,12 @@ public:
     {
         T *casted = nullptr;
 
-        for (auto component : components) {
-            casted = dynamic_cast<T *>(component);
-            if (casted != nullptr) {
-                break;
+        for (auto *component : components) {
+            if (component != nullptr) {
+                casted = dynamic_cast<T *>(component);
+                if (casted != nullptr) {
+                    break;
+                }
             }
         }
 

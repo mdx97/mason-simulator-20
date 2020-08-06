@@ -46,11 +46,8 @@ private:
     void SpawnInitialBlock();
     void SpawnBlock();
 
-    void BlockRotateLeft(Composite *composite);
-    void BlockRotateRight(Composite *composite);
-
-    void CorrectPositionAgainstBarrier(Composite *composite, Entity *barrier);
-    void CorrectPositionAgainstBarriers(Composite *composite);
+    void BlockRotateLeft(Composite *composite, bool check_overlap);
+    void BlockRotateRight(Composite *composite, bool check_overlap);
 
     void UpdateScore();
 
@@ -59,6 +56,8 @@ private:
     void HandleBlockControl();
     void HandleBlockGravity(float elapsed);
     void HandleScoring();
+
+    bool OverlapsAny(Composite *composite);
 };
 
 #endif
